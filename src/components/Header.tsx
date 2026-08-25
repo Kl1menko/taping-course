@@ -62,6 +62,12 @@ export default function Header() {
 
           <div className="flex items-center gap-2">
             <a
+              href="/cabinet"
+              className="hidden items-center gap-2 rounded-full border border-ink/15 px-5 py-2.5 text-sm font-bold transition hover:bg-ink hover:text-white sm:flex"
+            >
+              Кабінет
+            </a>
+            <a
               href={brand.telegram}
               target="_blank"
               rel="noopener noreferrer"

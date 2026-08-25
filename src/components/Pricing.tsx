@@ -1,6 +1,7 @@
 import { pricing } from "@/content";
 import { Arrow, Reveal, SectionTitle } from "./ui";
 import SignupButton from "./SignupButton";
+import BuyButton from "./cabinet/BuyButton";
 
 const plan = pricing.plan;
 
@@ -110,10 +111,10 @@ export default function Pricing() {
 
               {/* ── підвал: CTA + штрихкод ── */}
               <footer className="px-7 pb-6 pt-5 sm:px-9">
-                <SignupButton className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-lime px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-ink transition hover:brightness-95">
+                <BuyButton className="group flex w-full items-center justify-center gap-2.5 rounded-full bg-lime px-8 py-3.5 text-sm font-bold uppercase tracking-wide text-ink transition hover:brightness-95">
                   {plan.cta}
                   <Arrow className="transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
-                </SignupButton>
+                </BuyButton>
 
                 <p className="mt-3 text-center text-[11px] text-white/45">
                   {plan.guarantee}
