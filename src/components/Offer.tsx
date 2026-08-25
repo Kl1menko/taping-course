@@ -1,43 +1,85 @@
-import { offer } from "@/content";
-import { Arrow, Reveal } from "./ui";
-import SignupButton from "./SignupButton";
+"use client";
+
+import { offer, riskReversal, cta } from "@/content";
+import { Reveal } from "./ui";
+import ApplyButton from "./ApplyButton";
 
 export default function Offer() {
+  const hasPrice = offer.price !== null;
+
   return (
     <section id="offer" className="px-[10px] py-16 sm:py-24">
       <div className="w-full bg-ink px-4 py-16 sm:px-8 sm:py-24 lg:px-12">
-        <div className="wrap-narrow">
-          <Reveal>
-            <h2 className="text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-5xl lg:text-6xl">
-              {offer.headline}
-            </h2>
-            <p className="mt-7 max-w-2xl text-base leading-relaxed text-white/60 sm:text-lg">
-              {offer.lead}
+        <Reveal>
+          <div className="mx-auto max-w-3xl text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-lime">
+              {offer.subtitle}
             </p>
-          </Reveal>
+            <h2 className="mt-5 text-3xl font-extrabold leading-[1.08] tracking-tight text-white sm:text-4xl lg:text-5xl">
+              {offer.title}
+            </h2>
+          </div>
+        </Reveal>
 
-          <dl className="mt-14 grid gap-px overflow-hidden rounded-4xl bg-white/10 sm:grid-cols-2 lg:grid-cols-4">
-            {offer.points.map((p, i) => (
-              <Reveal key={p.k} delay={i * 80}>
-                <div className="h-full bg-ink p-7 transition hover:bg-white/[0.04]">
-                  <dt className="text-xs font-bold uppercase tracking-widest text-lime">
-                    {p.k}
-                  </dt>
-                  <dd className="mt-4 text-sm leading-relaxed text-white/80">{p.v}</dd>
-                </div>
-              </Reveal>
-            ))}
-          </dl>
+        <Reveal delay={120}>
+          <div className="mx-auto mt-14 max-w-2xl rounded-4xl border border-white/10 bg-white/[0.04] p-8 sm:p-10">
+            {/* value stack */}
+            <ul className="grid gap-2.5 sm:grid-cols-2">
+              {offer.includes.map((item) => (
+                <li key={item} className="flex items-start gap-2.5 text-sm text-white/80">
+                  <span
+                    className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-lime"
+                    aria-hidden="true"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"
+                         strokeLinecap="round" strokeLinejoin="round" className="h-2.5 w-2.5 text-ink">
+                      <path d="m5 13 4 4L19 7" />
+                    </svg>
+                  </span>
+                  {item}
+                </li>
+              ))}
+            </ul>
 
-          <Reveal delay={200}>
-            <div className="mt-12 flex justify-center sm:justify-start">
-              <SignupButton className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-lime px-10 py-5 text-base font-bold uppercase tracking-wide transition hover:brightness-95 sm:w-auto sm:py-4 sm:text-sm">
-                {offer.cta.label}
-                <Arrow className="h-5 w-5 transition group-hover:translate-x-0.5 group-hover:-translate-y-0.5 sm:h-4 sm:w-4" />
-              </SignupButton>
+            {/* ціна */}
+            <div className="mt-9 border-t border-white/10 pt-8 text-center">
+              {hasPrice ? (
+                <>
+                  {offer.oldPrice && (
+                    <p className="text-base text-white/35 line-through">
+                      {offer.oldPrice.toLocaleString("uk-UA")} {offer.currency}
+                    </p>
+                  )}
+                  <p className="mt-1 text-4xl font-extrabold tracking-tight text-white sm:text-5xl">
+                    {offer.price!.toLocaleString("uk-UA")}{" "}
+                    <span className="text-2xl sm:text-3xl">{offer.currency}</span>
+                  </p>
+                  <p className="mt-3 text-sm text-white/50">{offer.priceNote}</p>
+                </>
+              ) : (
+                <p className="text-base leading-relaxed text-white/70 sm:text-lg">
+                  {offer.priceHidden}
+                </p>
+              )}
             </div>
-          </Reveal>
-        </div>
+
+            <div className="mt-8">
+              <ApplyButton
+                source="offer"
+                className="w-full rounded-full bg-lime px-8 py-4.5 text-sm font-bold uppercase tracking-wide text-ink transition hover:brightness-95"
+              >
+                {cta.primaryShort}
+              </ApplyButton>
+              <p className="mt-4 text-center text-xs text-white/40">{offer.underCta}</p>
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal delay={220}>
+          <p className="mx-auto mt-10 max-w-xl text-center text-sm leading-relaxed text-white/45">
+            {riskReversal.text}
+          </p>
+        </Reveal>
       </div>
     </section>
   );

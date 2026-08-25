@@ -1,5 +1,5 @@
 import { objections } from "@/content";
-import { Reveal, SectionTitle } from "./ui";
+import { Reveal } from "./ui";
 
 // акцент відповіді чергується по картках
 const ACCENTS = ["#DEFF3C", "#F4A8F2", "#C8B6FF"];
@@ -9,7 +9,11 @@ export default function Objections() {
     <section id="objections" className="py-16 sm:py-24">
       <div className="wrap">
         <Reveal>
-          <SectionTitle highlight="ЗАПЕРЕЧЕННЯ" sub={objections.subtitle} />
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-extrabold uppercase leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              {objections.title}
+            </h2>
+          </div>
         </Reveal>
 
         <div className="mt-14 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">

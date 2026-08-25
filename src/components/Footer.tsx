@@ -12,7 +12,7 @@ export default function Footer() {
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <span className="text-2xl font-extrabold uppercase leading-tight tracking-tight sm:text-3xl">
-              {brand.nameFull}
+              {brand.name}
             </span>
             <p className="mt-3 max-w-xs text-sm text-ink/65">{brand.tagline}</p>
             <a

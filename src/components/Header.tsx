@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { brand, nav } from "@/content";
 import { TelegramIcon } from "./ui";
+import ApplyButton from "./ApplyButton";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -63,19 +64,16 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <a
               href="/cabinet"
-              className="hidden items-center gap-2 rounded-full border border-ink/15 px-5 py-2.5 text-sm font-bold transition hover:bg-ink hover:text-white sm:flex"
+              className="hidden items-center gap-2 rounded-full border border-ink/15 px-5 py-2.5 text-sm font-bold transition hover:bg-ink hover:text-white lg:flex"
             >
               Кабінет
             </a>
-            <a
-              href={brand.telegram}
-              target="_blank"
-              rel="noopener noreferrer"
+            <ApplyButton
+              source="header"
               className="hidden items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-bold transition hover:brightness-95 sm:flex"
             >
-              <TelegramIcon className="h-4 w-4" />
-              Telegram
-            </a>
+              Дізнатися про курс
+            </ApplyButton>
             <button
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Закрити меню" : "Відкрити меню"}

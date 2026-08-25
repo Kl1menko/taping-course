@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { brand, pricing } from "@/content";
+import { brand, offer } from "@/content";
 
 export default function NoAccess() {
   return (
@@ -22,10 +22,12 @@ export default function NoAccess() {
 
       <div className="mt-8 flex flex-col gap-3 sm:flex-row">
         <Link
-          href="/#pricing"
+          href="/#offer"
           className="rounded-full bg-ink px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110"
         >
-          придбати курс — {pricing.plan.currency}{pricing.plan.price}
+          {offer.price !== null
+            ? `придбати курс — ${offer.price.toLocaleString("uk-UA")} ${offer.currency}`
+            : "дізнатися про курс"}
         </Link>
         <a
           href={brand.telegram}

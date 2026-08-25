@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { createInvoice } from "@/lib/mono";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
-import { pricing } from "@/content";
+import { offer, brand } from "@/content";
 
 export async function POST(request: Request) {
   let body: Record<string, unknown>;
@@ -20,7 +20,14 @@ export async function POST(request: Request) {
   }
 
   // Ціну беремо з сервера, а не з тіла запиту — інакше її можна підмінити.
-  const amount = pricing.plan.price * 100;
+  // Поки ціна не затверджена — приймаємо лише заявки, не оплати.
+  if (offer.price === null) {
+    return NextResponse.json(
+      { error: "price is not published yet" },
+      { status: 409 }
+    );
+  }
+  const amount = offer.price * 100;
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -47,7 +54,7 @@ export async function POST(request: Request) {
     const invoice = await createInvoice({
       amount,
       reference,
-      destination: pricing.plan.name,
+      destination: `${brand.product} — ${brand.name}`,
       redirectUrl: `${origin}/cabinet?paid=1`,
       webHookUrl: `${origin}/api/mono/webhook`,
     });

@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { hero, marquee } from "@/content";
-import { Arrow, TelegramIcon } from "./ui";
-import { CountingNumber } from "@/components/animate-ui/primitives/texts/counting-number";
-import GlowButton from "./GlowButton";
+import { hero, cta } from "@/content";
+import { TelegramIcon } from "./ui";
+import ApplyButton from "./ApplyButton";
+import { track } from "@/lib/analytics";
 
 const CARDS = [
   {
@@ -89,36 +89,51 @@ export default function Hero() {
           ))}
         </div>
 
-        <div className="relative z-10 mx-auto max-w-3xl text-center">
-          <h1 className="animate-rise">
-            <span className="block text-[17vw] font-extrabold leading-[0.85] tracking-tighter sm:text-[10rem] md:text-[12.5rem]">
-              {hero.title}
-            </span>
-            <span className="mt-1 block text-[5.5vw] font-bold uppercase tracking-[0.35em] text-ink/55 sm:text-[2rem] sm:tracking-[0.42em]">
-              {hero.titleSub}
-            </span>
+        <div className="relative z-10 mx-auto max-w-3xl pt-16 text-center sm:pt-28 lg:pt-36">
+          <p className="animate-rise text-xs font-bold uppercase tracking-[0.3em] text-ink/45 sm:text-sm">
+            {hero.kicker}
+          </p>
+
+          <h1 className="mt-6 animate-rise text-[8vw] font-extrabold leading-[1.02] tracking-tighter sm:text-5xl lg:text-6xl">
+            {hero.title}
+            <span className="mt-2 block text-pink-deep">{hero.titleAccent}</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-xl animate-rise text-base text-ink/75 sm:text-lg">
+          <p className="mx-auto mt-7 max-w-2xl animate-rise text-base leading-relaxed text-ink/70 sm:text-lg">
             {hero.subtitle}
           </p>
 
-          <div className="mt-10 flex animate-rise flex-col items-center justify-center gap-4 sm:flex-row">
-            <GlowButton>
-              {hero.ctaPrimary.label}
-            </GlowButton>
-            <a
-              href={hero.ctaSecondary.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full bg-white/80 px-6 py-4 text-sm font-semibold backdrop-blur transition hover:bg-white sm:w-auto"
+          <div className="mt-12 flex animate-rise flex-col items-center justify-center gap-4 sm:flex-row">
+            <ApplyButton
+              source="hero"
+              className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-lime px-10 py-6 text-base font-extrabold uppercase tracking-wide text-ink shadow-xl shadow-lime/40 ring-1 ring-ink/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-lime/50 hover:brightness-105 sm:w-auto sm:text-lg"
             >
-              <span className="flex h-8 w-8 items-center justify-center rounded-full bg-lime text-ink">
-                <TelegramIcon className="h-4 w-4" />
-              </span>
-              {hero.ctaSecondary.label}
+              {cta.primary}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+                className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" />
+              </svg>
+            </ApplyButton>
+
+            <a
+              href={cta.secondaryHref}
+              className="inline-flex w-full items-center justify-center gap-3 rounded-full border-2 border-ink/15 bg-white/80 px-10 py-6 text-base font-bold backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-ink/30 hover:bg-white sm:w-auto sm:text-lg"
+            >
+              {cta.secondary}
             </a>
           </div>
+
+          <p className="mx-auto mt-8 max-w-none animate-rise whitespace-nowrap text-[2.6vw] leading-relaxed text-ink/50 sm:text-sm">
+            {hero.audienceLine}
+          </p>
 
           {/* фото на мобільному — горизонтальна стрічка */}
           <div className="mt-12 flex gap-3 overflow-x-auto pb-2 [scrollbar-width:none] sm:hidden [&::-webkit-scrollbar]:hidden">
@@ -131,39 +146,9 @@ export default function Hero() {
               </div>
             ))}
           </div>
-
-          <dl className="mx-auto mt-14 grid max-w-lg grid-cols-3 gap-4">
-            {hero.stats.map((s) => (
-              <div key={s.label} className="animate-rise rounded-3xl bg-white/70 px-3 py-4 backdrop-blur">
-                <dt className="text-2xl font-extrabold tabular-nums sm:text-3xl">
-                  <CountingNumber number={s.n} inView decimalSeparator=" " />
-                  {s.suffix}
-                </dt>
-                <dd className="mt-1 text-xs text-ink/60">{s.label}</dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </div>
 
-      {/* marquee */}
-      <div className="mx-[10px] mt-4 overflow-hidden rounded-full bg-ink py-4">
-        <div className="flex w-max animate-marquee">
-          {[0, 1].map((dup) => (
-            <div key={dup} className="flex shrink-0 items-center" aria-hidden={dup === 1}>
-              {marquee.map((word) => (
-                <span
-                  key={word}
-                  className="flex items-center gap-6 px-6 text-sm font-bold uppercase tracking-widest text-white sm:text-base"
-                >
-                  {word}
-                  <span className="text-lime">✦</span>
-                </span>
-              ))}
-            </div>
-          ))}
-        </div>
-      </div>
     </section>
   );
 }

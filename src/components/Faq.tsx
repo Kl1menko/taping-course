@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { faq } from "@/content";
-import { Reveal, SectionTitle } from "./ui";
+import { Reveal } from "./ui";
+import { track } from "@/lib/analytics";
 
 export default function Faq() {
   const [open, setOpen] = useState<number | null>(null);
@@ -11,7 +12,11 @@ export default function Faq() {
     <section id="faq" className="py-16 sm:py-24">
       <div className="wrap"><div className="mx-auto max-w-3xl">
         <Reveal>
-          <SectionTitle highlight="ЧАСТІ" rest="ПИТАННЯ" />
+          <div className="mx-auto max-w-3xl text-center">
+            <h2 className="text-3xl font-extrabold uppercase leading-tight tracking-tight sm:text-4xl lg:text-5xl">
+              {faq.title}
+            </h2>
+          </div>
         </Reveal>
 
         <div className="mt-14 space-y-3">
@@ -26,7 +31,11 @@ export default function Faq() {
                 >
                   <h3>
                     <button
-                      onClick={() => setOpen(isOpen ? null : i)}
+                      onClick={() => {
+                        const next = isOpen ? null : i;
+                        setOpen(next);
+                        if (next !== null) track("faq_open", { question: item.q });
+                      }}
                       aria-expanded={isOpen}
                       aria-controls={`faq-${i}`}
                       className="flex w-full items-center gap-4 px-6 py-5 text-left sm:px-8"

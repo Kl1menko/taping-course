@@ -1,22 +1,22 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { SignupModalProvider } from "@/components/SignupModal";
+import { ApplyProvider } from "@/components/ApplyModal";
 
 export const metadata: Metadata = {
-  title: "Kotova Taping Course — курс кінезіотейпування з нуля до практики",
+  title: "Системне навчання кінезіологічному тейпуванню | Kotova Taping Academy",
   description:
-    "Онлайн-курс кінезіотейпування: 6 модулів, 40+ відеоуроків, розбір домашніх завдань і практичний залік із сертифікатом. Для масажистів, тренерів і студентів.",
+    "13 структурованих уроків, практика, стартовий набір і супровід. Не набір готових схем, а система: розуміння механізмів, вибір техніки та усвідомлене застосування. Для масажистів, тренерів і фізичних терапевтів.",
   keywords: [
-    "кінезіотейпування",
+    "кінезіологічне тейпування",
+    "кінезіотейпування навчання",
     "курс тейпування",
-    "тейпування навчання",
-    "кінезіотейп",
-    "реабілітація",
+    "kotova taping academy",
+    "тейпування для масажистів",
   ],
   openGraph: {
-    title: "Kotova Taping Course — курс кінезіотейпування",
+    title: "Системне навчання кінезіологічному тейпуванню",
     description:
-      "Навчись тейпувати впевнено: 6 модулів, практика під наглядом викладача, сертифікат.",
+      "13 уроків · практика · стартовий набір · супровід. Kotova Taping Academy.",
     type: "website",
     locale: "uk_UA",
   },
@@ -45,7 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <SignupModalProvider>{children}</SignupModalProvider>
+        <ApplyProvider>{children}</ApplyProvider>
       </body>
     </html>
   );
