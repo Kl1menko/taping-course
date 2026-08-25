@@ -63,14 +63,28 @@ export default function Offer() {
               )}
             </div>
 
-            <div className="mt-8">
+            <div className="mt-9">
               <ApplyButton
                 source="offer"
-                className="w-full rounded-full bg-lime px-8 py-4.5 text-sm font-bold uppercase tracking-wide text-ink transition hover:brightness-95"
+                className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-lime px-7 py-5 text-sm font-extrabold uppercase leading-tight tracking-tight text-ink shadow-lg shadow-lime/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-lime/30 hover:brightness-105 sm:text-base"
               >
                 {cta.primaryShort}
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
+                >
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
               </ApplyButton>
-              <p className="mt-4 text-center text-xs text-white/40">{offer.underCta}</p>
+              <p className="mt-5 text-center text-xs leading-relaxed text-white/40">
+                {offer.underCta}
+              </p>
             </div>
           </div>
         </Reveal>
