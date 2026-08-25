@@ -34,7 +34,7 @@ export const nav = [
 
 // Єдиний головний CTA на весь сайт.
 export const cta = {
-  primary: "Дізнатися, чи підходить мені курс",
+  primary: "Дізнатися, чи підходить курс",
   primaryShort: "Дізнатися, чи підходить курс",
   secondary: "Подивитися програму",
   secondaryHref: "#program",

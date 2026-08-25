@@ -10,37 +10,37 @@ const CARDS = [
   {
     src: "/hero/tape-3.jpg",
     alt: "Сітчаста аплікація тейпа на стегні",
-    cls: "left-[3%] top-[20%] h-32 w-32 sm:h-44 sm:w-44 lg:h-52 lg:w-52",
+    cls: "left-[1%] top-[16%] h-28 w-28 sm:h-40 sm:w-40 lg:h-48 lg:w-48",
     delay: "0s",
   },
   {
     src: "/hero/tape-1.jpg",
     alt: "Аплікація тейпа на гомілці й стопі",
-    cls: "left-[10%] top-[56%] h-36 w-36 sm:h-48 sm:w-48 lg:h-56 lg:w-56",
+    cls: "left-[4%] top-[62%] h-32 w-32 sm:h-44 sm:w-44 lg:h-52 lg:w-52",
     delay: "1.1s",
   },
   {
     src: "/hero/tape-6.jpg",
     alt: "Тейпування кисті та пальців",
-    cls: "left-[24%] top-[6%] h-32 w-32 sm:h-40 sm:w-40 lg:h-48 lg:w-48",
+    cls: "left-[13%] top-[3%] h-28 w-28 sm:h-36 sm:w-36 lg:h-44 lg:w-44",
     delay: "2.2s",
   },
   {
     src: "/hero/tape-5.jpg",
     alt: "Аплікація тейпа на шийному відділі",
-    cls: "right-[23%] top-[7%] h-32 w-32 sm:h-40 sm:w-40 lg:h-48 lg:w-48",
+    cls: "right-[13%] top-[3%] h-28 w-28 sm:h-36 sm:w-36 lg:h-44 lg:w-44",
     delay: "0.6s",
   },
   {
     src: "/hero/tape-2.jpg",
     alt: "Віяльна аплікація на литковому м'язі",
-    cls: "right-[8%] top-[52%] h-36 w-36 sm:h-48 sm:w-48 lg:h-56 lg:w-56",
+    cls: "right-[4%] top-[62%] h-32 w-32 sm:h-44 sm:w-44 lg:h-52 lg:w-52",
     delay: "1.7s",
   },
   {
     src: "/hero/tape-4.jpg",
     alt: "Тейпування кисті в бічному світлі",
-    cls: "right-[2%] top-[18%] h-32 w-32 sm:h-44 sm:w-44 lg:h-52 lg:w-52",
+    cls: "right-[1%] top-[16%] h-28 w-28 sm:h-40 sm:w-40 lg:h-48 lg:w-48",
     delay: "2.6s",
   },
 ];
@@ -49,7 +49,7 @@ const CARDS = [
 export default function Hero() {
   return (
     <section id="top" className="relative overflow-hidden pt-24 sm:pt-28">
-      <div className="relative w-full overflow-hidden bg-cream px-4 py-20 sm:py-28 md:py-36">
+      <div className="relative w-full overflow-hidden bg-cream px-4 py-16 sm:py-20 md:py-24">
         {/* wave */}
         <svg
           className="pointer-events-none absolute inset-x-0 top-1/2 h-[120%] w-[140%] -translate-x-[14%] -translate-y-1/2 opacity-90"
@@ -89,7 +89,7 @@ export default function Hero() {
           ))}
         </div>
 
-        <div className="relative z-10 mx-auto max-w-3xl pt-16 text-center sm:pt-28 lg:pt-36">
+        <div className="relative z-10 mx-auto max-w-3xl pt-10 text-center sm:pt-16 lg:pt-20">
           <p className="animate-rise text-xs font-bold uppercase tracking-[0.3em] text-ink/45 sm:text-sm">
             {hero.kicker}
           </p>
@@ -103,10 +103,10 @@ export default function Hero() {
             {hero.subtitle}
           </p>
 
-          <div className="mx-auto mt-12 flex w-full max-w-md animate-rise flex-col items-stretch gap-3">
+          <div className="mx-auto mt-12 flex w-full max-w-xl animate-rise flex-col items-stretch gap-3">
             <ApplyButton
               source="hero"
-              className="group inline-flex items-center justify-center gap-3 rounded-full bg-lime px-10 py-6 text-base font-extrabold uppercase tracking-wide text-ink shadow-xl shadow-lime/40 ring-1 ring-ink/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-lime/50 hover:brightness-105 sm:text-lg"
+              className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-lime px-7 py-4 text-sm font-extrabold uppercase leading-tight tracking-tight text-ink shadow-lg shadow-lime/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-lime/40 hover:brightness-105 sm:px-9 sm:py-5 sm:text-base"
             >
               {cta.primary}
               <svg
@@ -117,7 +117,7 @@ export default function Hero() {
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 aria-hidden="true"
-                className="h-5 w-5 shrink-0 transition-transform duration-300 group-hover:translate-x-1"
+                className="h-4 w-4 shrink-0 transition-transform duration-300 group-hover:translate-x-1 sm:h-[18px] sm:w-[18px]"
               >
                 <path d="M5 12h14M13 6l6 6-6 6" />
               </svg>
@@ -125,7 +125,7 @@ export default function Hero() {
 
             <a
               href={cta.secondaryHref}
-              className="inline-flex items-center justify-center gap-3 rounded-full border-2 border-ink/15 bg-white/80 px-10 py-6 text-base font-bold backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-ink/30 hover:bg-white sm:text-lg"
+              className="inline-flex items-center justify-center rounded-full border border-ink/15 bg-white/70 px-7 py-4 text-sm font-bold backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-ink/30 hover:bg-white sm:px-9 sm:py-5 sm:text-base"
             >
               {cta.secondary}
             </a>
