@@ -5,29 +5,15 @@ import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
 import { MEDICAL_ICONS } from "./icons";
 
 
-// SVG-іконки: штрих 1.5, viewBox 24 — однакова вага в усіх картках
+// SVG-іконки з набору Medicine & Health: штрих 1.5, viewBox 24
 const ICONS: Record<string, React.ReactNode> = {
-  // руки / масаж — з набору Medicine & Health (hand)
+  // масажисти / реабілітологи — руки (hand)
   hands: <path d={MEDICAL_ICONS.hand} />,
-  // свисток / тренер
-  whistle: (
-    <>
-      <circle cx="9" cy="14" r="5.5" />
-      <path d="M14.2 12.2 21 9.4" />
-      <path d="M14.5 15.4 19 17" />
-      <path d="M13 9V5h5" />
-    </>
-  ),
-  // біг / спорт
-  run: (
-    <>
-      <circle cx="15" cy="4.6" r="2" />
-      <path d="M8 21l3-5.2-2.6-2.6.9-4.9 3.3-1.4 2.9 2.6 3 .9" />
-      <path d="M12.4 15.8 15 19.4h3.6" />
-      <path d="M9.2 8.3 5.6 9.7 4 13" />
-    </>
-  ),
-  // студенти-медики — з набору Medicine & Health (medical_documentation)
+  // тренери — робота з м'язами під навантаженням (muscle)
+  muscle: <path d={MEDICAL_ICONS.muscle} />,
+  // спортсмени-аматори — аплікації на власному тілі (leg)
+  leg: <path d={MEDICAL_ICONS.leg} />,
+  // студенти-медики — документація (medical_documentation)
   book: <path d={MEDICAL_ICONS.medicalDoc} />,
 };
 
