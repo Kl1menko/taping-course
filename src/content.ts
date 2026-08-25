@@ -140,26 +140,32 @@ export const outcome = {
   items: [
     {
       verb: "РОЗУМІТИ",
+      icon: "brain",
       text: "як працює кінезіологічне тейпування та які механізми лежать в основі методики.",
     },
     {
       verb: "АНАЛІЗУВАТИ",
+      icon: "stethoscope",
       text: "конкретну ситуацію замість механічного копіювання схеми.",
     },
     {
       verb: "ОБИРАТИ",
+      icon: "dna",
       text: "відповідну техніку залежно від задачі та особливостей клієнта.",
     },
     {
       verb: "ПРАКТИКУВАТИ",
+      icon: "hand",
       text: "аплікації на основних анатомічних зонах.",
     },
     {
       verb: "ОЦІНЮВАТИ",
+      icon: "heartRate",
       text: "показання, протипоказання та обмеження методу.",
     },
     {
       verb: "ІНТЕГРУВАТИ",
+      icon: "muscle",
       text: "тейпування у свою професійну практику.",
     },
   ],
@@ -169,10 +175,10 @@ export const outcome = {
 export const mechanism = {
   title: "Від схеми до клінічного мислення",
   steps: [
-    { n: "01", name: "UNDERSTAND", text: "Розумієте механізми." },
-    { n: "02", name: "ANALYZE", text: "Вчитеся оцінювати ситуацію." },
-    { n: "03", name: "APPLY", text: "Виконуєте практичні техніки." },
-    { n: "04", name: "ADAPT", text: "Вчитеся адаптувати техніку під конкретний випадок." },
+    { n: "01", name: "РОЗУМІННЯ", icon: "brain", text: "Розумієте механізми." },
+    { n: "02", name: "АНАЛІЗ", icon: "stethoscope", text: "Вчитеся оцінювати ситуацію." },
+    { n: "03", name: "ПРАКТИКА", icon: "hand", text: "Виконуєте практичні техніки." },
+    { n: "04", name: "АДАПТАЦІЯ", icon: "muscle", text: "Вчитеся адаптувати техніку під конкретний випадок." },
   ],
   note: "Саме тому це не бібліотека аплікацій, а система навчання.",
 };
@@ -180,12 +186,12 @@ export const mechanism = {
 // ─── 07. PROGRAM ─────────────────────────────────────────────
 export const program = {
   title: "13 уроків, які складаються в одну систему",
-  subtitle: "FOUNDATION → CLINICAL THINKING → PRACTICE",
+  subtitle: "Фундамент → Клінічне мислення → Практика",
   modules: [
     {
       n: "01",
       slug: "foundation",
-      name: "FOUNDATION",
+      name: "ФУНДАМЕНТ",
       icon: "bones",
       title: "Фундамент",
       lessons: [
@@ -200,7 +206,7 @@ export const program = {
     {
       n: "02",
       slug: "clinical-thinking",
-      name: "CLINICAL THINKING",
+      name: "КЛІНІЧНЕ МИСЛЕННЯ",
       icon: "dna",
       title: "Клінічне мислення",
       lessons: [
@@ -212,7 +218,7 @@ export const program = {
     {
       n: "03",
       slug: "practice",
-      name: "PRACTICE",
+      name: "ПРАКТИКА",
       icon: "muscle",
       title: "Практика",
       lessons: [
@@ -223,7 +229,7 @@ export const program = {
       ],
     },
   ],
-  outro: "В результаті ви проходите шлях: FOUNDATION → CLINICAL THINKING → PRACTICE",
+  outro: "В результаті ви проходите шлях: Фундамент → Клінічне мислення → Практика",
 };
 
 // ─── 08. WHAT'S INCLUDED ─────────────────────────────────────
@@ -237,27 +243,27 @@ export const included = {
     },
     {
       icon: "bandage",
-      name: "STARTER KIT",
+      name: "СТАРТОВИЙ НАБІР",
       text: "Кінезіологічні тейпи + професійні ножиці + сантиметрова стрічка.",
     },
     {
       icon: "doctor",
-      name: "PRACTICE COMMUNITY",
+      name: "СПІЛЬНОТА ПРАКТИКИ",
       text: "Середовище для питань, розборів та професійної підтримки.",
     },
     {
       icon: "stethoscope",
-      name: "WEEKLY CLINICAL SESSIONS",
+      name: "ЩОТИЖНЕВІ КЛІНІЧНІ РОЗБОРИ",
       text: "Розбираємо питання та практичні ситуації, які виникають під час навчання.",
     },
     {
       icon: "heartRate",
-      name: "FAQ BASE",
+      name: "БАЗА ВІДПОВІДЕЙ",
       text: "База відповідей на поширені питання.",
     },
     {
       icon: "dna",
-      name: "EVIDENCE LIBRARY",
+      name: "БІБЛІОТЕКА ДОСЛІДЖЕНЬ",
       text: "Матеріали та посилання на наукові джерела.",
     },
   ],
@@ -385,10 +391,10 @@ export const offer = {
     "теорія",
     "практика",
     "стартовий набір",
-    "practice community",
-    "weekly clinical sessions",
-    "FAQ base",
-    "evidence-based materials",
+    "спільнота практики",
+    "щотижневі клінічні розбори",
+    "база відповідей",
+    "матеріали з доказовою базою",
   ],
 
   // ⚠️ ЦІНА. Поки price === null — на сторінці показується
@@ -468,7 +474,7 @@ export const thankYou = {
 export const finalCta = {
   title: "Готові перейти від фрагментарних знань до системного навчання?",
   subtitle: "Приєднуйтесь до KOTOVA TAPING ACADEMY.",
-  meta: "13 уроків · практика · Starter Kit · супровід",
+  meta: "13 уроків · практика · стартовий набір · супровід",
 };
 
 // ─── КОНТАКТИ ────────────────────────────────────────────────

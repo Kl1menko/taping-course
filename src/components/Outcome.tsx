@@ -1,5 +1,6 @@
 import { outcome } from "@/content";
 import { Reveal } from "./ui";
+import { MedicalIcon, type MedicalIconName } from "./icons";
 
 export default function Outcome() {
   return (
@@ -18,7 +19,16 @@ export default function Outcome() {
           {outcome.items.map((item, i) => (
             <Reveal key={item.verb} delay={i * 70}>
               <article className="h-full rounded-4xl border border-ink/10 bg-white p-7">
-                <h3 className="text-sm font-extrabold uppercase tracking-widest text-pink-deep">
+                <span
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-lime text-ink"
+                  aria-hidden="true"
+                >
+                  <MedicalIcon
+                    name={item.icon as MedicalIconName}
+                    className="h-[22px] w-[22px]"
+                  />
+                </span>
+                <h3 className="mt-6 text-sm font-extrabold uppercase tracking-widest text-pink-deep">
                   {item.verb}
                 </h3>
                 <p className="mt-3 text-sm leading-relaxed text-ink/70 sm:text-base">
