@@ -103,10 +103,10 @@ export default function Hero() {
             {hero.subtitle}
           </p>
 
-          <div className="mt-12 flex animate-rise flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mx-auto mt-12 flex w-full max-w-md animate-rise flex-col items-stretch gap-3">
             <ApplyButton
               source="hero"
-              className="group inline-flex w-full items-center justify-center gap-3 rounded-full bg-lime px-10 py-6 text-base font-extrabold uppercase tracking-wide text-ink shadow-xl shadow-lime/40 ring-1 ring-ink/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-lime/50 hover:brightness-105 sm:w-auto sm:text-lg"
+              className="group inline-flex items-center justify-center gap-3 rounded-full bg-lime px-10 py-6 text-base font-extrabold uppercase tracking-wide text-ink shadow-xl shadow-lime/40 ring-1 ring-ink/5 transition duration-300 hover:-translate-y-0.5 hover:shadow-2xl hover:shadow-lime/50 hover:brightness-105 sm:text-lg"
             >
               {cta.primary}
               <svg
@@ -125,7 +125,7 @@ export default function Hero() {
 
             <a
               href={cta.secondaryHref}
-              className="inline-flex w-full items-center justify-center gap-3 rounded-full border-2 border-ink/15 bg-white/80 px-10 py-6 text-base font-bold backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-ink/30 hover:bg-white sm:w-auto sm:text-lg"
+              className="inline-flex items-center justify-center gap-3 rounded-full border-2 border-ink/15 bg-white/80 px-10 py-6 text-base font-bold backdrop-blur transition duration-300 hover:-translate-y-0.5 hover:border-ink/30 hover:bg-white sm:text-lg"
             >
               {cta.secondary}
             </a>
