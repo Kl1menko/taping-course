@@ -37,6 +37,17 @@ export function MedicalIcon({
   name: MedicalIconName;
   className?: string;
 }) {
+  const d = MEDICAL_ICONS[name];
+
+  // Невідома назва — не малюємо порожній path мовчки: у dev видно,
+  // що іконки бракує, у проді картка просто лишається без неї.
+  if (!d) {
+    if (process.env.NODE_ENV !== "production") {
+      console.warn(`[MedicalIcon] невідома іконка: "${name}"`);
+    }
+    return null;
+  }
+
   return (
     <svg
       viewBox="0 0 24 24"
@@ -48,7 +59,7 @@ export function MedicalIcon({
       aria-hidden="true"
       className={className}
     >
-      <path d={MEDICAL_ICONS[name]} />
+      <path d={d} />
     </svg>
   );
 }

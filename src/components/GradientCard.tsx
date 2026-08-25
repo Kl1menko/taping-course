@@ -2,20 +2,8 @@
 
 import { useRef, useState } from "react";
 import { motion, useMotionValue, useSpring, useTransform } from "motion/react";
-import { MEDICAL_ICONS } from "./icons";
+import { MedicalIcon, type MedicalIconName } from "./icons";
 
-
-// SVG-іконки з набору Medicine & Health: штрих 1.5, viewBox 24
-const ICONS: Record<string, React.ReactNode> = {
-  // масажисти / реабілітологи — руки (hand)
-  hands: <path d={MEDICAL_ICONS.hand} />,
-  // тренери — робота з м'язами під навантаженням (muscle)
-  muscle: <path d={MEDICAL_ICONS.muscle} />,
-  // спортсмени-аматори — аплікації на власному тілі (leg)
-  leg: <path d={MEDICAL_ICONS.leg} />,
-  // студенти-медики — документація (medical_documentation)
-  book: <path d={MEDICAL_ICONS.medicalDoc} />,
-};
 
 // пари кольорів для нижнього світіння
 const ACCENTS = [
@@ -102,17 +90,10 @@ export default function GradientCard({
           aria-hidden="true"
           className="flex h-12 w-12 items-center justify-center rounded-full bg-white/[0.07] ring-1 ring-white/10 backdrop-blur-sm transition-transform duration-500 group-hover:scale-110"
         >
-          <svg
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+          <MedicalIcon
+            name={icon as MedicalIconName}
             className="h-[22px] w-[22px] text-white"
-          >
-            {ICONS[icon]}
-          </svg>
+          />
         </span>
 
         <h3 className="mt-6 text-lg font-extrabold leading-[1.2] tracking-tight text-white xl:text-xl">
