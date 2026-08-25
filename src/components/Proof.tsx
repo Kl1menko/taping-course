@@ -16,7 +16,7 @@ export default function Proof() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2">
+        <div className="mx-auto mt-14 grid max-w-5xl gap-5 sm:grid-cols-2">
           {proof.items.map((t, i) => (
             <Reveal key={t.name} delay={i * 80}>
               <article className="h-full rounded-4xl border border-ink/10 bg-white p-7 sm:p-8">

@@ -110,8 +110,9 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  // text-base на мобільному — iOS зумить сторінку, якщо шрифт < 16px.
   const field =
-    "w-full rounded-2xl border border-ink/10 bg-white px-5 py-3.5 text-sm outline-none transition placeholder:text-ink/35 focus:border-ink/30 focus:ring-4 focus:ring-lime/40";
+    "w-full rounded-2xl border border-ink/10 bg-white px-5 py-3.5 text-base outline-none transition placeholder:text-ink/35 focus:border-ink/30 focus:ring-4 focus:ring-lime/40 sm:text-sm";
 
   const question = qualification.questions[step];
   const isContactStep = step === qualification.questions.length;
@@ -137,14 +138,14 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
           role="dialog"
           aria-modal="true"
           aria-label={qualification.title}
-          className={`relative flex max-h-[92vh] w-full max-w-lg flex-col overflow-hidden rounded-t-4xl bg-cream transition-transform duration-300 sm:rounded-4xl ${
+          className={`relative mt-auto flex max-h-[88dvh] w-full max-w-lg flex-col overflow-hidden rounded-t-4xl bg-cream transition-transform duration-300 sm:mt-0 sm:max-h-[90vh] sm:rounded-4xl ${
             isOpen ? "translate-y-0" : "translate-y-8"
-          } mt-auto sm:mt-0`}
+          }`}
         >
           <button
             onClick={close}
             aria-label="Закрити"
-            className="absolute right-5 top-5 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-ink/5 transition hover:bg-ink/10"
+            className="absolute right-4 top-4 z-20 flex h-11 w-11 items-center justify-center rounded-full bg-ink/5 text-ink/70 transition active:bg-ink/15 sm:right-5 sm:top-5 sm:h-10 sm:w-10 sm:hover:bg-ink/10"
           >
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
                  strokeLinecap="round" className="h-4 w-4">
@@ -154,7 +155,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
 
           {status === "ok" ? (
             /* ── екран подяки ── */
-            <div className="overflow-y-auto px-7 py-12 text-center">
+            <div className="overflow-y-auto px-5 py-10 text-center sm:px-7 sm:py-12">
               <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-lime">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
                      strokeLinecap="round" strokeLinejoin="round" className="h-7 w-7 text-ink">
@@ -183,7 +184,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
                 target="_blank"
                 rel="noopener noreferrer"
                 onClick={() => track("telegram_click", { source: "thank_you" })}
-                className="mt-9 inline-flex items-center gap-2.5 rounded-full bg-ink px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110"
+                className="mt-8 inline-flex min-h-14 items-center gap-2.5 rounded-full bg-ink px-8 text-sm font-bold uppercase tracking-wide text-white transition active:brightness-125 sm:hover:brightness-110"
               >
                 <TelegramIcon className="h-4 w-4" />
                 {thankYou.cta}
@@ -192,8 +193,9 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
           ) : (
             <>
               {/* ── прогрес ── */}
-              <div className="px-7 pt-8">
-                <div className="flex gap-1.5">
+              <div className="px-5 pt-6 sm:px-7 sm:pt-8">
+                {/* pr-14 — щоб смужки не заповзали під кнопку закриття */}
+                <div className="flex gap-1.5 pr-14">
                   {Array.from({ length: totalSteps }).map((_, i) => (
                     <span
                       key={i}
@@ -204,31 +206,31 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
                   ))}
                 </div>
 
-                <h2 className="mt-6 pr-10 text-xl font-extrabold leading-tight tracking-tight sm:text-2xl">
+                <h2 className="mt-5 text-lg font-extrabold leading-snug tracking-tight sm:mt-6 sm:text-2xl">
                   {step === 0 ? qualification.title : question?.label ?? "Контакти"}
                 </h2>
                 {step === 0 && (
-                  <p className="mt-2 text-sm leading-relaxed text-ink/55">
+                  <p className="mt-2 text-[13px] leading-relaxed text-ink/55 sm:text-sm">
                     {qualification.subtitle}
                   </p>
                 )}
               </div>
 
-              <div className="overflow-y-auto px-7 pb-8 pt-6">
+              <div className="overflow-y-auto px-5 pb-[max(1.5rem,env(safe-area-inset-bottom))] pt-5 sm:px-7 sm:pb-8 sm:pt-6">
                 {!isContactStep && question ? (
                   <>
                     {step === 0 && (
-                      <p className="mb-4 text-sm font-semibold">{question.label}</p>
+                      <p className="mb-3.5 text-sm font-semibold">{question.label}</p>
                     )}
-                    <div className="space-y-2.5">
+                    <div className="space-y-2">
                       {question.options.map((opt) => (
                         <button
                           key={opt}
                           onClick={() => pick(question.id, opt)}
-                          className={`w-full rounded-2xl border px-5 py-3.5 text-left text-sm transition ${
+                          className={`flex min-h-[52px] w-full items-center rounded-2xl border px-5 text-left text-[15px] transition sm:min-h-0 sm:py-3.5 sm:text-sm ${
                             answers[question.id] === opt
                               ? "border-ink bg-ink text-white"
-                              : "border-ink/10 bg-white hover:border-ink/30"
+                              : "border-ink/10 bg-white active:border-ink/40 active:bg-ink/[0.03] sm:hover:border-ink/30"
                           }`}
                         >
                           {opt}
@@ -272,7 +274,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
                     <button
                       type="submit"
                       disabled={status === "sending"}
-                      className="w-full rounded-full bg-lime px-8 py-4 text-sm font-bold uppercase tracking-wide text-ink transition hover:brightness-95 disabled:opacity-50"
+                      className="flex min-h-14 w-full items-center justify-center rounded-full bg-lime px-8 text-sm font-bold uppercase tracking-wide text-ink transition active:brightness-90 disabled:opacity-50 sm:hover:brightness-95"
                     >
                       {status === "sending" ? "надсилаємо…" : qualification.submit}
                     </button>
@@ -282,7 +284,7 @@ export function ApplyProvider({ children }: { children: React.ReactNode }) {
                 {step > 0 && (
                   <button
                     onClick={() => setStep((s) => s - 1)}
-                    className="mt-5 text-xs font-bold uppercase tracking-widest text-ink/40 transition hover:text-ink"
+                    className="-ml-2 mt-4 inline-flex min-h-11 items-center px-2 text-xs font-bold uppercase tracking-widest text-ink/45 transition active:text-ink sm:hover:text-ink"
                   >
                     ← назад
                   </button>

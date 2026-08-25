@@ -14,7 +14,7 @@ export default function Audience() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
+        <div className="mx-auto mt-14 grid max-w-6xl gap-5 sm:grid-cols-2 xl:grid-cols-3">
           {audience.items.map((item, i) => (
             <Reveal key={item.title} delay={i * 90} className="h-full">
               <GradientCard

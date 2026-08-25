@@ -11,7 +11,7 @@ export default function VideoPlayer({
 }) {
   if (!videoId) {
     return (
-      <div className="flex aspect-video items-center justify-center rounded-3xl border border-dashed border-ink/20 bg-ink/[0.03]">
+      <div className="flex aspect-video items-center justify-center border-y border-dashed border-ink/20 bg-ink/[0.03] sm:rounded-3xl sm:border">
         <p className="px-6 text-center text-sm text-ink/45">
           Відео цього уроку ще завантажується.
         </p>
@@ -25,7 +25,7 @@ export default function VideoPlayer({
       `https://www.youtube-nocookie.com/embed/${videoId}` +
       `?rel=0&modestbranding=1&playsinline=1`;
     return (
-      <div className="aspect-video overflow-hidden rounded-3xl bg-black">
+      <div className="aspect-video overflow-hidden bg-black sm:rounded-3xl">
         <iframe
           src={src}
           title={title}
@@ -38,7 +38,7 @@ export default function VideoPlayer({
   }
 
   return (
-    <div className="flex aspect-video items-center justify-center rounded-3xl bg-ink/[0.03]">
+    <div className="flex aspect-video items-center justify-center bg-ink/[0.03] sm:rounded-3xl">
       <p className="text-sm text-ink/45">Невідомий провайдер відео: {provider}</p>
     </div>
   );

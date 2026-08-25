@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { createInvoice } from "@/lib/mono";
+import { usdToKopiyky } from "@/lib/fx";
 import { createAdminClient, createClient } from "@/lib/supabase/server";
 import { offer, brand } from "@/content";
 
@@ -27,7 +28,8 @@ export async function POST(request: Request) {
       { status: 409 }
     );
   }
-  const amount = offer.price * 100;
+  // Ціна в доларах, рахунок — у гривні за курсом НБУ.
+  const amount = await usdToKopiyky(offer.price);
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -55,7 +57,7 @@ export async function POST(request: Request) {
       amount,
       reference,
       destination: `${brand.product} — ${brand.name}`,
-      redirectUrl: `${origin}/cabinet?paid=1`,
+      redirectUrl: `${origin}/thanks?email=${encodeURIComponent(email)}`,
       webHookUrl: `${origin}/api/mono/webhook`,
     });
 

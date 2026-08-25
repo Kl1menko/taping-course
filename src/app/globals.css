@@ -102,3 +102,41 @@ body { background: theme(colors.cream); color: theme(colors.ink); }
 @media (prefers-reduced-motion: reduce) {
   .blob-a, .blob-b, .blob-c { animation: none; }
 }
+
+/* ── Кнопка «рідкий метал»: рухомий відблиск ── */
+@keyframes metal-sheen {
+  0%       { transform: translateX(-120%) skewX(-12deg); }
+  55%, 100% { transform: translateX(220%) skewX(-12deg); }
+}
+
+.metal-sheen {
+  animation: metal-sheen 4.5s cubic-bezier(.4, 0, .2, 1) infinite;
+}
+
+/* На наведенні відблиск пробігає частіше — кнопка «оживає». */
+.group:hover .metal-sheen { animation-duration: 1.6s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .metal-sheen { animation: none; }
+}
+
+/* ── Анімована металева рамка кнопки ── */
+@property --metal-angle {
+  syntax: "<angle>";
+  initial-value: 0deg;
+  inherits: false;
+}
+
+@keyframes metal-ring-spin {
+  to { --metal-angle: 360deg; }
+}
+
+.metal-ring {
+  animation: metal-ring-spin 4s linear infinite;
+}
+
+.group:hover .metal-ring { animation-duration: 1.8s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .metal-ring { animation: none; }
+}

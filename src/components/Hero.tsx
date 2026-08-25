@@ -106,7 +106,8 @@ export default function Hero() {
           <div className="mx-auto mt-12 flex w-full max-w-xl animate-rise flex-col items-stretch gap-3">
             <ApplyButton
               source="hero"
-              className="group inline-flex items-center justify-center gap-2.5 rounded-full bg-lime px-7 py-4 text-sm font-extrabold uppercase leading-tight tracking-tight text-ink shadow-lg shadow-lime/30 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-lime/40 hover:brightness-105 sm:px-9 sm:py-5 sm:text-base"
+              glass="iosLime"
+              className="px-7 text-sm leading-tight tracking-tight sm:min-h-[68px] sm:px-9 sm:text-base"
             >
               {cta.primary}
               <svg
@@ -131,7 +132,11 @@ export default function Hero() {
             </a>
           </div>
 
-          <p className="mx-auto mt-8 max-w-none animate-rise whitespace-nowrap text-[2.6vw] leading-relaxed text-ink/50 sm:text-sm">
+          {/* Раніше тут були whitespace-nowrap + text-[2.6vw]: рядок
+              тримався в одну лінію, а шрифт масштабувався від ширини
+              екрана — на телефоні виходило ~10px і текст упирався в краї.
+              Тепер звичайне перенесення й читабельний розмір. */}
+          <p className="mx-auto mt-8 max-w-md animate-rise text-[13px] leading-relaxed text-ink/50 sm:max-w-xl sm:text-sm">
             {hero.audienceLine}
           </p>
 

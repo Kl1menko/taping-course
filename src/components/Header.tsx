@@ -3,7 +3,6 @@
 import { useEffect, useState } from "react";
 import { brand, nav } from "@/content";
 import { TelegramIcon } from "./ui";
-import ApplyButton from "./ApplyButton";
 
 export default function Header() {
   const [open, setOpen] = useState(false);
@@ -68,12 +67,6 @@ export default function Header() {
             >
               Кабінет
             </a>
-            <ApplyButton
-              source="header"
-              className="hidden items-center gap-2 rounded-full bg-lime px-5 py-2.5 text-sm font-bold transition hover:brightness-95 sm:flex"
-            >
-              Дізнатися про курс
-            </ApplyButton>
             <button
               onClick={() => setOpen((v) => !v)}
               aria-label={open ? "Закрити меню" : "Відкрити меню"}
@@ -118,6 +111,20 @@ export default function Header() {
                 {item.label}
               </a>
             ))}
+            {/* Вхід у кабінет — учні заходять переважно з телефона,
+                тож у мобільному меню він потрібен обов'язково. */}
+            <a
+              href="/cabinet"
+              onClick={() => setOpen(false)}
+              className="mt-2 flex items-center justify-center gap-2 rounded-2xl border border-ink/15 px-4 py-3.5 text-base font-bold"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
+                   strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <path d="m10 17 5-5-5-5" /><path d="M15 12H3" />
+              </svg>
+              Вхід у кабінет
+            </a>
             <a
               href={brand.telegram}
               target="_blank"

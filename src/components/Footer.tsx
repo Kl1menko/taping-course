@@ -41,6 +41,15 @@ export default function Footer() {
                   </a>
                 </li>
               ))}
+              {/* Вхід для тих, хто вже купив курс. */}
+              <li>
+                <a
+                  href="/cabinet"
+                  className="inline-block rounded-full border border-ink/20 px-4 py-1.5 text-sm transition hover:bg-ink hover:text-white"
+                >
+                  Кабінет
+                </a>
+              </li>
             </ul>
           </nav>
 

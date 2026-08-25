@@ -15,7 +15,8 @@ export default function FinalCta() {
 
             <ApplyButton
               source="final"
-              className="mt-10 w-full rounded-full bg-ink px-10 py-5 text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110 sm:w-auto"
+              glass="ios"
+              className="mt-10 w-full px-10 sm:min-h-[64px] sm:w-auto"
             >
               {cta.primary}
             </ApplyButton>

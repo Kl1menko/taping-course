@@ -7,9 +7,12 @@ import { createClient } from "@/lib/supabase/client";
 export default function LessonComplete({
   lessonId,
   initialDone,
+  compact = false,
 }: {
   lessonId: string;
   initialDone: boolean;
+  /** Варіант для липкої панелі на мобільних: тягнеться на всю ширину. */
+  compact?: boolean;
 }) {
   const [done, setDone] = useState(initialDone);
   const [isPending, startTransition] = useTransition();
@@ -41,18 +44,24 @@ export default function LessonComplete({
     startTransition(() => router.refresh());
   }
 
+  // min-h-12 — дотикова ціль не менша за рекомендовані 44px.
+  const base = compact
+    ? "flex min-h-12 flex-1 items-center justify-center gap-2.5 rounded-full px-4 text-[13px]"
+    : "inline-flex min-h-12 items-center gap-3 rounded-full px-7 text-sm";
+
   return (
     <button
       onClick={toggle}
       disabled={isPending}
-      className={`inline-flex items-center gap-3 rounded-full px-7 py-3.5 text-sm font-bold uppercase tracking-wide transition disabled:opacity-60 ${
+      aria-pressed={done}
+      className={`${base} font-bold uppercase tracking-wide transition disabled:opacity-60 ${
         done
           ? "bg-lime text-ink"
-          : "border border-ink/15 hover:bg-ink hover:text-white"
+          : "border border-ink/15 bg-white active:bg-ink active:text-white sm:hover:bg-ink sm:hover:text-white"
       }`}
     >
       <span
-        className={`flex h-5 w-5 items-center justify-center rounded-full border ${
+        className={`flex h-5 w-5 shrink-0 items-center justify-center rounded-full border ${
           done ? "border-ink bg-ink text-lime" : "border-current text-transparent"
         }`}
         aria-hidden="true"
@@ -62,7 +71,7 @@ export default function LessonComplete({
           <path d="m5 13 4 4L19 7" />
         </svg>
       </span>
-      {done ? "пройдено" : "позначити пройденим"}
+      <span className="truncate">{done ? "пройдено" : "позначити пройденим"}</span>
     </button>
   );
 }

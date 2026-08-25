@@ -16,7 +16,7 @@ export default function Objections() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-5 lg:grid-cols-2 xl:grid-cols-3">
+        <div className="mx-auto mt-14 grid max-w-6xl gap-5 lg:grid-cols-2 xl:grid-cols-3">
           {objections.items.map((item, i) => {
             const accent = ACCENTS[i % ACCENTS.length];
             return (

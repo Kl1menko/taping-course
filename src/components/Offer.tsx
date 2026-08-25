@@ -66,7 +66,8 @@ export default function Offer() {
             <div className="mt-9">
               <ApplyButton
                 source="offer"
-                className="group inline-flex w-full items-center justify-center gap-2.5 rounded-full bg-lime px-7 py-5 text-sm font-extrabold uppercase leading-tight tracking-tight text-ink shadow-lg shadow-lime/20 transition duration-300 hover:-translate-y-0.5 hover:shadow-xl hover:shadow-lime/30 hover:brightness-105 sm:text-base"
+                glass="iosLime"
+                className="w-full px-7 text-sm leading-tight tracking-tight sm:min-h-[64px] sm:text-base"
               >
                 {cta.primaryShort}
                 <svg

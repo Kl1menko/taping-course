@@ -67,9 +67,15 @@ export async function POST(request: Request) {
     if (created?.user) {
       userId = created.user.id;
     } else if (error) {
-      // Уже існує — дістаємо наявного.
-      const { data: list } = await admin.auth.admin.listUsers();
-      userId = list?.users.find((u) => u.email === order.email)?.id ?? null;
+      // Уже існує — дістаємо наявного. listUsers() посторінковий
+      // (50 за раз), тому шукаємо через profiles за email:
+      // профіль створює тригер on_auth_user_created.
+      const { data: profile } = await admin
+        .from("profiles")
+        .select("id")
+        .eq("email", order.email)
+        .maybeSingle();
+      userId = profile?.id ?? null;
     }
     if (userId) {
       await admin.from("orders").update({ user_id: userId }).eq("id", order.id);
@@ -85,6 +91,23 @@ export async function POST(request: Request) {
     .from("enrollments")
     .upsert({ user_id: userId, order_id: order.id, source: "purchase" },
             { onConflict: "user_id" });
+
+  // Лист із посиланням на вхід. Без нього людина, яка закрила вкладку
+  // після оплати, не знає, як потрапити в кабінет.
+  // Помилка тут не має ламати вебхук — доступ уже відкрито, і людина
+  // завжди може увійти сама через /login.
+  try {
+    const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
+    const { error: mailErr } = await admin.auth.signInWithOtp({
+      email: order.email,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback?next=/cabinet`,
+      },
+    });
+    if (mailErr) throw mailErr;
+  } catch (e) {
+    console.error("[mono webhook] не вдалося надіслати лист доступу", e);
+  }
 
   return NextResponse.json({ ok: true });
 }

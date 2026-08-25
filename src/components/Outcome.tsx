@@ -1,6 +1,6 @@
 import { outcome } from "@/content";
 import { Reveal } from "./ui";
-import { MedicalIcon, type MedicalIconName } from "./icons";
+import OutcomeCard from "./OutcomeCard";
 
 export default function Outcome() {
   return (
@@ -15,26 +15,15 @@ export default function Outcome() {
           </div>
         </Reveal>
 
-        <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {outcome.items.map((item, i) => (
-            <Reveal key={item.verb} delay={i * 70}>
-              <article className="h-full rounded-4xl border border-ink/10 bg-white p-7">
-                <span
-                  className="flex h-11 w-11 items-center justify-center rounded-full bg-lime text-ink"
-                  aria-hidden="true"
-                >
-                  <MedicalIcon
-                    name={item.icon as MedicalIconName}
-                    className="h-[22px] w-[22px]"
-                  />
-                </span>
-                <h3 className="mt-6 text-sm font-extrabold uppercase tracking-widest text-pink-deep">
-                  {item.verb}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-ink/70 sm:text-base">
-                  {item.text}
-                </p>
-              </article>
+            <Reveal key={item.verb} delay={i * 70} className="h-full">
+              <OutcomeCard
+                index={i}
+                icon={item.icon}
+                verb={item.verb}
+                text={item.text}
+              />
             </Reveal>
           ))}
         </div>

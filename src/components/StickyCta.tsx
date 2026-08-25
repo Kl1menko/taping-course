@@ -16,17 +16,20 @@ export default function StickyCta() {
   }, []);
 
   return (
+    // Панель темна, а не bg-cream: на кремовому фоні сторінки вона
+    // зливалася з контентом і не читалась як окремий шар.
+    // pb з safe-area — щоб не ховалась під домашньою смужкою iPhone.
     <div
-      className={`fixed inset-x-0 bottom-0 z-50 border-t border-ink/10 bg-cream/95 px-4 py-3 backdrop-blur transition-transform duration-300 lg:hidden ${
+      className={`fixed inset-x-0 bottom-0 z-50 bg-ink/95 px-4 pb-[max(0.75rem,env(safe-area-inset-bottom))] pt-3 shadow-[0_-8px_30px_-10px_rgba(14,14,16,0.45)] backdrop-blur-xl transition-transform duration-300 lg:hidden ${
         show ? "translate-y-0" : "translate-y-full"
       }`}
     >
       <div className="flex items-center gap-3">
         <div className="min-w-0 flex-1">
-          <p className="truncate text-xs font-bold uppercase tracking-widest text-ink/45">
+          <p className="truncate text-[10px] font-bold uppercase tracking-widest text-white/45">
             Курс тейпування
           </p>
-          <p className="truncate text-sm font-extrabold">
+          <p className="truncate text-lg font-extrabold leading-tight text-white">
             {offer.price !== null
               ? `${offer.price.toLocaleString("uk-UA")} ${offer.currency}`
               : "13 уроків · практика · набір"}
@@ -35,9 +38,10 @@ export default function StickyCta() {
 
         <ApplyButton
           source="sticky"
-          className="shrink-0 rounded-full bg-lime px-6 py-3 text-xs font-bold uppercase tracking-wide text-ink"
+          glass="iosLime"
+          className="!min-h-[46px] shrink-0 px-6 text-xs"
         >
-          Дізнатися
+          {cta.primaryShort}
         </ApplyButton>
       </div>
     </div>

@@ -1,0 +1,106 @@
+<!--
+  Лист «Доступ до курсу відкрито» (Confirm signup).
+  Приходить після успішної оплати — вебхук створює користувача.
+  Вставити в Supabase → Authentication → Emails → Templates → Confirm signup.
+-->
+<table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+       style="background-color:#F4F2F0;margin:0;padding:32px 16px;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Helvetica,Arial,sans-serif;">
+  <tr>
+    <td align="center">
+
+      <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+             style="max-width:520px;background-color:#ffffff;border-radius:24px;overflow:hidden;">
+
+        <!-- шапка -->
+        <tr>
+          <td style="background-color:#0E0E10;padding:32px;">
+            <p style="margin:0;color:#ffffff;font-size:15px;font-weight:800;letter-spacing:2px;">
+              KOTOVA TAPING ACADEMY
+            </p>
+            <p style="margin:6px 0 0 0;color:#DEFF3C;font-size:12px;letter-spacing:1px;text-transform:uppercase;">
+              оплату отримано
+            </p>
+          </td>
+        </tr>
+
+        <!-- тіло -->
+        <tr>
+          <td style="padding:36px 32px 32px 32px;">
+            <h1 style="margin:0;color:#0E0E10;font-size:24px;line-height:1.25;font-weight:800;letter-spacing:-0.5px;">
+              Вітаємо в курсі
+            </h1>
+
+            <p style="margin:16px 0 0 0;color:rgba(14,14,16,0.65);font-size:15px;line-height:1.6;">
+              Доступ до курсу кінезіологічного тейпування відкрито.
+              Натисни кнопку, щоб зайти в кабінет і почати навчання.
+            </p>
+
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin:28px 0 0 0;">
+              <tr>
+                <td style="background-color:#DEFF3C;border-radius:999px;">
+                  <a href="{{ .ConfirmationURL }}"
+                     style="display:inline-block;padding:16px 36px;color:#0E0E10;font-size:14px;font-weight:800;letter-spacing:1px;text-transform:uppercase;text-decoration:none;">
+                    Почати навчання
+                  </a>
+                </td>
+              </tr>
+            </table>
+
+            <!-- що всередині -->
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+                   style="margin:32px 0 0 0;background-color:#F4F2F0;border-radius:16px;">
+              <tr>
+                <td style="padding:22px 24px;">
+                  <p style="margin:0;color:rgba(14,14,16,0.45);font-size:11px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;">
+                    що всередині
+                  </p>
+                  <p style="margin:12px 0 0 0;color:rgba(14,14,16,0.75);font-size:14px;line-height:1.7;">
+                    6 модулів · 24 уроки<br>
+                    Від основ і анатомії до лімфодренажу та розбору кейсів
+                  </p>
+                </td>
+              </tr>
+            </table>
+
+            <p style="margin:26px 0 0 0;color:rgba(14,14,16,0.45);font-size:13px;line-height:1.6;">
+              Кабінет відкривається з будь-якого пристрою — на телефоні
+              зручно повторювати аплікації під час практики.
+            </p>
+
+            <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%"
+                   style="margin:24px 0 0 0;border-top:1px solid rgba(14,14,16,0.08);">
+              <tr>
+                <td style="padding:20px 0 0 0;">
+                  <p style="margin:0;color:rgba(14,14,16,0.4);font-size:12px;line-height:1.6;">
+                    Кнопка не працює? Скопіюй це посилання у браузер:
+                  </p>
+                  <p style="margin:8px 0 0 0;font-size:12px;line-height:1.5;word-break:break-all;">
+                    <a href="{{ .ConfirmationURL }}" style="color:#D96FD6;text-decoration:underline;">
+                      {{ .ConfirmationURL }}
+                    </a>
+                  </p>
+                </td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+
+        <!-- підвал -->
+        <tr>
+          <td style="background-color:#F4F2F0;padding:24px 32px;">
+            <p style="margin:0;color:rgba(14,14,16,0.45);font-size:12px;line-height:1.6;">
+              Виникло питання по курсу — просто відповідай на цей лист
+              або пиши в Telegram.
+            </p>
+            <p style="margin:14px 0 0 0;font-size:12px;">
+              <a href="https://t.me/kotova_taping" style="color:rgba(14,14,16,0.55);text-decoration:none;">Telegram</a>
+              <span style="color:rgba(14,14,16,0.25);">&nbsp;·&nbsp;</span>
+              <a href="mailto:hello@kotovataping.com" style="color:rgba(14,14,16,0.55);text-decoration:none;">hello@kotovataping.com</a>
+            </p>
+          </td>
+        </tr>
+
+      </table>
+    </td>
+  </tr>
+</table>
