@@ -37,6 +37,26 @@ export default function VideoPlayer({
     );
   }
 
+  // Файл із public/ — для тестів і коротких відео. Для реального
+  // курсу не годиться: URL відкритий, відео качається одним запитом
+  // і не захищене нічим. Бойовий варіант — Bunny Stream, ще один case.
+  if (provider === "file") {
+    const src = videoId.startsWith("/") ? videoId : `/lessons/${videoId}`;
+    return (
+      <div className="aspect-video overflow-hidden bg-black sm:rounded-3xl">
+        <video
+          src={src}
+          title={title}
+          controls
+          playsInline
+          preload="metadata"
+          controlsList="nodownload"
+          className="h-full w-full"
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="flex aspect-video items-center justify-center bg-ink/[0.03] sm:rounded-3xl">
       <p className="text-sm text-ink/45">Невідомий провайдер відео: {provider}</p>
