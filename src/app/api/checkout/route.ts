@@ -14,7 +14,9 @@ export async function POST(request: Request) {
 
   const email = String(body.email ?? "").trim().toLowerCase();
   const name = String(body.name ?? "").trim();
-  const phone = String(body.phone ?? "").trim();
+  // Зберігаємо самі цифри: Telegram віддає номер у своєму форматі,
+  // і шукати збіг простіше по нормалізованому вигляду.
+  const phone = String(body.phone ?? "").replace(/\D/g, "");
 
   if (!email || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) {
     return NextResponse.json({ error: "valid email required" }, { status: 400 });
@@ -57,7 +59,7 @@ export async function POST(request: Request) {
       amount,
       reference,
       destination: `${brand.product} — ${brand.name}`,
-      redirectUrl: `${origin}/thanks?email=${encodeURIComponent(email)}`,
+      redirectUrl: `${origin}/thanks?ref=${reference}`,
       webHookUrl: `${origin}/api/mono/webhook`,
     });
 

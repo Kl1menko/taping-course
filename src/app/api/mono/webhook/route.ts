@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { verifyWebhook, type WebhookPayload } from "@/lib/mono";
 import { createAdminClient } from "@/lib/supabase/server";
+import { grantAccess } from "@/lib/auth/grant";
 
 // Вебхук monobank: підтверджує оплату й відкриває доступ.
 export async function POST(request: Request) {
@@ -23,7 +24,7 @@ export async function POST(request: Request) {
 
   const { data: order } = await admin
     .from("orders")
-    .select("id, user_id, email, status, amount")
+    .select("id, user_id, email, status, amount, access_code")
     .eq("invoice_id", payload.invoiceId)
     .maybeSingle();
 
@@ -57,56 +58,22 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: true });
   }
 
-  // Знаходимо або створюємо користувача за email і відкриваємо доступ.
-  let userId = order.user_id;
-  if (!userId) {
-    const { data: created, error } = await admin.auth.admin.createUser({
-      email: order.email,
-      email_confirm: true,
-    });
-    if (created?.user) {
-      userId = created.user.id;
-    } else if (error) {
-      // Уже існує — дістаємо наявного. listUsers() посторінковий
-      // (50 за раз), тому шукаємо через profiles за email:
-      // профіль створює тригер on_auth_user_created.
-      const { data: profile } = await admin
-        .from("profiles")
-        .select("id")
-        .eq("email", order.email)
-        .maybeSingle();
-      userId = profile?.id ?? null;
-    }
-    if (userId) {
-      await admin.from("orders").update({ user_id: userId }).eq("id", order.id);
-    }
-  }
+  // Створює юзера (якщо треба), відкриває доступ і видає код.
+  const granted = await grantAccess(order);
+  if (!granted) return NextResponse.json({ ok: true });
 
-  if (!userId) {
-    console.error("[mono webhook] could not resolve user for", order.email);
-    return NextResponse.json({ ok: true });
-  }
-
-  await admin
-    .from("enrollments")
-    .upsert({ user_id: userId, order_id: order.id, source: "purchase" },
-            { onConflict: "user_id" });
-
-  // Лист із посиланням на вхід. Без нього людина, яка закрила вкладку
-  // після оплати, не знає, як потрапити в кабінет.
-  // Помилка тут не має ламати вебхук — доступ уже відкрито, і людина
-  // завжди може увійти сама через /login.
+  // Лист із посиланням на вхід — приємний бонус, а не єдиний шлях:
+  // доступ уже відкрито, код доступу показано на /thanks, і є Telegram.
+  // Поки немає власного домену, Resend шле лише на пошту власника
+  // акаунта, тому помилка тут очікувана і нічого не ламає.
   try {
     const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
-    const { error: mailErr } = await admin.auth.signInWithOtp({
+    await admin.auth.signInWithOtp({
       email: order.email,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback?next=/cabinet`,
-      },
+      options: { emailRedirectTo: `${origin}/auth/callback?next=/cabinet` },
     });
-    if (mailErr) throw mailErr;
   } catch (e) {
-    console.error("[mono webhook] не вдалося надіслати лист доступу", e);
+    console.error("[mono webhook] лист доступу не пішов", e);
   }
 
   return NextResponse.json({ ok: true });

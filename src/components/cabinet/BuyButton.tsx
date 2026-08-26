@@ -77,7 +77,15 @@ export default function BuyButton({
                 placeholder="Email — сюди прийде доступ"
                 className={field}
               />
-              <input name="phone" placeholder="Телефон (необовʼязково)" className={field} />
+              {/* Телефон обовʼязковий: за ним працює вхід через
+                  Telegram-бот, коли людина загубила код доступу. */}
+              <input
+                name="phone"
+                type="tel"
+                required
+                placeholder="Телефон — запасний спосіб входу"
+                className={field}
+              />
 
               {status === "error" && (
                 <p className="text-sm text-red-600">{error}</p>

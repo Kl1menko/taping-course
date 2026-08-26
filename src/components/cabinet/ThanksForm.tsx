@@ -1,33 +1,64 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
-import { createClient } from "@/lib/supabase/client";
+import { useRouter, useSearchParams } from "next/navigation";
 import { brand } from "@/content";
 
-// Сторінка після оплати. Людина щойно заплатила, але сесії ще немає —
-// тому одразу пропонуємо надіслати посилання для входу, а не кидаємо
-// на порожню форму логіну.
+type State =
+  | { step: "checking" }
+  | { step: "ready"; code: string; signedIn: boolean }
+  | { step: "failed" };
+
+// Сторінка після оплати. Людина щойно заплатила — сесії ще немає,
+// але пошта як канал недоступна (немає домену під Resend), тому
+// входимо одразу: /api/claim звіряє рахунок із monobank і ставить куки.
 export default function ThanksForm() {
   const params = useSearchParams();
-  const [email, setEmail] = useState(params.get("email") ?? "");
-  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const router = useRouter();
+  const ref = params.get("ref");
 
-  async function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setStatus("sending");
+  const [state, setState] = useState<State>({ step: "checking" });
+  const [tgUrl, setTgUrl] = useState<string | null>(null);
+  // React 18+ у dev монтує двічі — без цього claim пішов би двічі
+  // і другий раз отримав би 409 «already used».
+  const claimed = useRef(false);
 
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email: email.trim().toLowerCase(),
-      options: {
-        emailRedirectTo: `${window.location.origin}/auth/callback?next=/cabinet`,
-      },
-    });
+  useEffect(() => {
+    if (!ref || claimed.current) return;
+    claimed.current = true;
 
-    setStatus(error ? "error" : "sent");
-  }
+    (async () => {
+      try {
+        const res = await fetch("/api/claim", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ref }),
+        });
+        const data = await res.json();
+
+        if (!res.ok) {
+          setState({ step: "failed" });
+          return;
+        }
+        setState({ step: "ready", code: data.code, signedIn: data.ok });
+        // Сесія вже в куках — оновлюємо серверні компоненти,
+        // щоб шапка й /cabinet побачили залогіненого користувача.
+        if (data.ok) router.refresh();
+      } catch {
+        setState({ step: "failed" });
+      }
+    })();
+
+    fetch("/api/telegram/link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ref }),
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => d?.url && setTgUrl(d.url))
+      .catch(() => {});
+  }, [ref, router]);
 
   return (
     <div className="w-full max-w-md rounded-4xl border border-ink/10 bg-white p-9">
@@ -42,60 +73,87 @@ export default function ThanksForm() {
         Оплату отримано
       </h1>
 
-      {status === "sent" ? (
+      {state.step === "checking" && (
         <p className="mt-4 text-sm leading-relaxed text-ink/60">
-          Посилання для входу надіслано на <strong>{email}</strong>.
-          Перейди за ним — і кабінет відкриється. Воно діє одну годину.
+          Підтверджуємо оплату й відкриваємо доступ…
         </p>
-      ) : (
+      )}
+
+      {state.step === "ready" && (
         <>
           <p className="mt-4 text-sm leading-relaxed text-ink/60">
-            Вітаємо в курсі. Введи пошту, на яку оформлював оплату —
-            надішлемо посилання для входу в кабінет. Пароль не потрібен.
+            {state.signedIn
+              ? "Вітаємо в курсі — кабінет уже відкрито."
+              : "Доступ відкрито. Увійти можна за кодом нижче."}
           </p>
 
-          <form onSubmit={onSubmit} className="mt-7">
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="you@example.com"
-              className="w-full rounded-2xl border border-ink/15 bg-white px-4 py-3.5 text-base outline-none transition focus:border-ink/40"
-            />
+          <div className="mt-7 rounded-2xl border border-ink/15 bg-ink/[0.03] p-5 text-center">
+            <p className="text-xs font-bold uppercase tracking-widest text-ink/50">
+              Код доступу
+            </p>
+            <p className="mt-2 font-mono text-3xl font-extrabold tracking-[0.3em] text-ink">
+              {state.code}
+            </p>
+            <p className="mt-3 text-xs leading-relaxed text-ink/50">
+              Збережи його. За ним заходиш з будь-якого пристрою
+              на сторінці входу — пароль і пошта не потрібні.
+            </p>
+          </div>
 
-            {status === "error" && (
-              <p className="mt-3 text-sm text-red-600">
-                Не вдалося надіслати лист. Спробуй ще раз або напиши нам.
-              </p>
-            )}
-
-            <button
-              type="submit"
-              disabled={status === "sending"}
-              className="mt-5 w-full rounded-full bg-ink px-8 py-4 text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110 disabled:opacity-50"
+          {state.signedIn && (
+            <Link
+              href="/cabinet"
+              className="mt-5 block w-full rounded-full bg-ink px-8 py-4 text-center text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110"
             >
-              {status === "sending" ? "надсилаємо…" : "надіслати посилання"}
-            </button>
-          </form>
+              перейти в кабінет
+            </Link>
+          )}
+
+          {tgUrl && (
+            <a
+              href={tgUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-3 block w-full rounded-full border border-ink/15 px-8 py-4 text-center text-sm font-bold uppercase tracking-wide text-ink transition hover:bg-ink/5"
+            >
+              зберегти доступ у telegram
+            </a>
+          )}
+        </>
+      )}
+
+      {state.step === "failed" && (
+        <>
+          <p className="mt-4 text-sm leading-relaxed text-ink/60">
+            Не вдалося підтвердити оплату автоматично. Якщо гроші
+            списались — напиши нам, відкриємо доступ вручну.
+          </p>
+          <a
+            href={brand.telegram}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-5 block w-full rounded-full bg-ink px-8 py-4 text-center text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110"
+          >
+            написати нам
+          </a>
         </>
       )}
 
       <p className="mt-6 text-xs leading-relaxed text-ink/45">
-        Доступ не відкрився?{" "}
+        Питання по доступу —{" "}
         <a
           href={brand.telegram}
           target="_blank"
           rel="noopener noreferrer"
           className="font-semibold text-pink-deep underline underline-offset-2"
         >
-          Напиши нам
-        </a>{" "}
-        — розберемось. Або{" "}
-        <Link href="/cabinet" className="font-semibold text-pink-deep underline underline-offset-2">
-          спробуй кабінет
+          напиши нам
+        </a>
+        . Або{" "}
+        <Link href="/login" className="font-semibold text-pink-deep underline underline-offset-2">
+          увійди за кодом
         </Link>
-        , якщо вже входив раніше.
+        .
       </p>
     </div>
   );
