@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { brand } from "@/content";
+import Spinner from "@/components/cabinet/Spinner";
 
 type State = "checking" | "ready" | "failed";
 
@@ -74,9 +75,12 @@ export default function ThanksForm() {
       </h1>
 
       {state === "checking" && (
-        <p className="mt-4 text-sm leading-relaxed text-ink/60">
-          Підтверджуємо оплату й відкриваємо доступ…
-        </p>
+        <div className="mt-4 flex items-center gap-3">
+          <Spinner className="h-5 w-5 shrink-0 text-ink/50" />
+          <p className="text-sm leading-relaxed text-ink/60">
+            Підтверджуємо оплату й відкриваємо доступ…
+          </p>
+        </div>
       )}
 
       {state === "ready" && (

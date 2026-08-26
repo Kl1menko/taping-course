@@ -32,6 +32,9 @@ export default {
         },
       },
       animation: {
+        // Трохи повільніше за дефолтний spin: різкий оберт на великому
+        // кружку виглядає нервово.
+        "spin-slow": "spin 900ms linear infinite",
         marquee: "marquee 28s linear infinite",
         floaty: "floaty 6s ease-in-out infinite",
         rise: "rise .7s cubic-bezier(.2,.7,.3,1) both",

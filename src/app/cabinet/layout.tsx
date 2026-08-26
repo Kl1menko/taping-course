@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { brand } from "@/content";
+import SignOutButton from "@/components/cabinet/SignOutButton";
 
 export const metadata: Metadata = {
   title: "Кабінет — Kotova Taping Course",
@@ -43,19 +44,7 @@ export default async function CabinetLayout({
             <span className="hidden max-w-[220px] truncate text-sm text-ink/50 lg:block">
               {user?.email}
             </span>
-            <form action="/auth/signout" method="post">
-              <button
-                aria-label="Вийти з кабінету"
-                className="flex min-h-11 items-center gap-2 rounded-full border border-ink/15 px-4 text-[11px] font-bold uppercase tracking-widest transition active:bg-ink active:text-white sm:hover:bg-ink sm:hover:text-white"
-              >
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"
-                     strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 sm:hidden">
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <path d="m16 17 5-5-5-5" /><path d="M21 12H9" />
-                </svg>
-                <span className="hidden sm:inline">вийти</span>
-              </button>
-            </form>
+            <SignOutButton />
           </div>
         </div>
       </header>
