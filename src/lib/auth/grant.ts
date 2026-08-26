@@ -1,6 +1,5 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/server";
-import { generateAccessCode } from "./session";
 
 /**
  * Знаходить або створює користувача за email.
@@ -35,16 +34,14 @@ export async function resolveUser(email: string): Promise<string | null> {
 }
 
 /**
- * Відкриває доступ за оплаченим рахунком і повертає код доступу.
- * Ідемпотентна: повторний виклик не створює другий enrollment
- * і не перевипускає код — людина могла його вже записати.
+ * Відкриває доступ за оплаченим рахунком.
+ * Ідемпотентна: повторний виклик не створює другий enrollment.
  */
 export async function grantAccess(order: {
   id: string;
   email: string;
   user_id: string | null;
-  access_code?: string | null;
-}): Promise<{ userId: string; code: string } | null> {
+}): Promise<{ userId: string } | null> {
   const admin = createAdminClient();
 
   const userId = order.user_id ?? (await resolveUser(order.email));
@@ -53,11 +50,8 @@ export async function grantAccess(order: {
     return null;
   }
 
-  const code = order.access_code ?? generateAccessCode();
-
   await admin.from("orders").update({
     user_id: userId,
-    access_code: code,
     updated_at: new Date().toISOString(),
   }).eq("id", order.id);
 
@@ -66,5 +60,5 @@ export async function grantAccess(order: {
     { onConflict: "user_id" }
   );
 
-  return { userId, code };
+  return { userId };
 }

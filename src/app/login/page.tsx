@@ -8,10 +8,14 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+  // Юзернейм бота читаємо на сервері: NEXT_PUBLIC_ у клієнтському
+  // компоненті вимагав би, щоб змінна була на місці ще під час білду.
+  const bot = process.env.NEXT_PUBLIC_TELEGRAM_BOT ?? null;
+
   return (
     <main className="flex min-h-screen items-center justify-center px-5 py-16">
       <Suspense>
-        <LoginForm />
+        <LoginForm bot={bot} />
       </Suspense>
     </main>
   );

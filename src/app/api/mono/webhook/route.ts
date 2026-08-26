@@ -24,7 +24,7 @@ export async function POST(request: Request) {
 
   const { data: order } = await admin
     .from("orders")
-    .select("id, user_id, email, status, amount, access_code")
+    .select("id, user_id, email, status, amount")
     .eq("invoice_id", payload.invoiceId)
     .maybeSingle();
 

@@ -31,7 +31,7 @@ export async function POST(request: Request) {
   const admin = createAdminClient();
   const { data: order } = await admin
     .from("orders")
-    .select("id, email, user_id, amount, status, invoice_id, access_code, auto_login_used_at")
+    .select("id, email, user_id, amount, status, invoice_id, auto_login_used_at")
     .eq("reference", reference)
     .maybeSingle();
 
@@ -82,9 +82,5 @@ export async function POST(request: Request) {
 
   const ok = await signInAs(order.email);
 
-  return NextResponse.json({
-    ok,
-    email: order.email,
-    code: granted.code,
-  });
+  return NextResponse.json({ ok, email: order.email });
 }

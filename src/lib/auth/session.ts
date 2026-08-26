@@ -43,12 +43,6 @@ export async function signInAs(email: string): Promise<boolean> {
   return true;
 }
 
-/** Шестизначний код доступу. crypto — щоб не був передбачуваним. */
-export function generateAccessCode(): string {
-  const n = crypto.getRandomValues(new Uint32Array(1))[0] % 1_000_000;
-  return String(n).padStart(6, "0");
-}
-
 /** Токен для t.me/bot?start=… — Telegram дозволяє лише [A-Za-z0-9_-]. */
 export function generateLinkToken(): string {
   const bytes = crypto.getRandomValues(new Uint8Array(24));

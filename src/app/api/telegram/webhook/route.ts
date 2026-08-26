@@ -7,20 +7,22 @@ import {
   type TgUpdate,
 } from "@/lib/telegram";
 import { generateLinkToken } from "@/lib/auth/session";
+import { resolveUser } from "@/lib/auth/grant";
 import { brand } from "@/content";
 
 /**
- * Вебхук Telegram-бота.
+ * Вебхук Telegram-бота — єдиний вхід у кабінет.
  *
- * Два сценарії:
- *   /start <token> — людина прийшла з /thanks: токен уже прив'язаний
- *                    до оплаченого рахунку, лишається запам'ятати chat_id;
- *   /start         — прийшла сама: питаємо номер через request_contact
- *                    і шукаємо оплату за ним. Номер від Telegram
- *                    верифікований — SMS і Twilio не потрібні.
+ * Пошта як канал недоступна (немає домену під Resend), тому доступ
+ * підтверджується номером телефону: Telegram віддає його
+ * верифікованим через request_contact, тому SMS не потрібні.
+ *
+ *   /start <token> — прийшла з /thanks: токен уже прив'язаний до оплати;
+ *   /start         — прийшла сама: питаємо номер і шукаємо оплату;
+ *   /grant …       — адмін відкриває доступ вручну, якщо номер не збігся.
  *
  * Захист: Telegram не підписує запити, тому в URL вебхука кладеться
- * секрет (secret_token), який Telegram віддає заголовком.
+ * секрет, який Telegram віддає заголовком.
  */
 export async function POST(request: Request) {
   const secret = process.env.TELEGRAM_WEBHOOK_SECRET;
@@ -42,12 +44,12 @@ export async function POST(request: Request) {
   if (!msg) return NextResponse.json({ ok: true });
 
   const chatId = msg.chat.id;
-  const admin = createAdminClient();
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
+  const text = (msg.text ?? "").trim();
 
   // ─── Людина поділилась номером ─────────────────────────────
   if (msg.contact) {
-    // Чужий контакт із адресної книги не рахуємо за свій.
+    // Чужий контакт з адресної книги не рахуємо за свій.
     if (msg.contact.user_id && msg.contact.user_id !== msg.from?.id) {
       await sendMessage(
         chatId,
@@ -57,99 +59,164 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: true });
     }
 
-    const phone = normalizePhone(msg.contact.phone_number);
-    const { data: order } = await admin
-      .from("orders")
-      .select("id, email, user_id")
-      .eq("status", "success")
-      .not("phone", "is", null)
-      .filter("phone", "like", `%${phone.slice(-9)}`)
-      .order("created_at", { ascending: false })
-      .maybeSingle();
+    const order = await findOrderByPhone(msg.contact.phone_number);
 
     if (!order) {
       await sendMessage(
         chatId,
-        "За цим номером оплати не знайшлось.\n\n" +
-          "Якщо оплачував із іншим номером — напиши нам, розберемось вручну: " +
-          brand.telegramHandle,
+        "За цим номером оплати не знайшлось 🤔\n\n" +
+          "Таке буває, якщо при оформленні був інший номер. " +
+          `Напиши ${brand.telegramHandle} — відкриємо доступ вручну, це швидко.`,
         { reply_markup: REMOVE_KEYBOARD }
       );
       return NextResponse.json({ ok: true });
     }
 
-    await bindTelegram(order, chatId, msg.from?.username, phone);
+    await bindTelegram(order, chatId, msg.from?.username, normalizePhone(msg.contact.phone_number));
     await sendAccessLink(chatId, order, origin);
     return NextResponse.json({ ok: true });
   }
 
+  // ─── Адмінські команди ─────────────────────────────────────
+  if (text.startsWith("/grant") || text.startsWith("/find")) {
+    return handleAdmin(chatId, text, origin);
+  }
+
   // ─── /start ────────────────────────────────────────────────
-  const text = (msg.text ?? "").trim();
   if (text.startsWith("/start")) {
     const token = text.slice("/start".length).trim();
 
     if (token) {
-      const { data: link } = await admin
-        .from("telegram_links")
-        .select("token, order_id, email, used_at, expires_at")
-        .eq("token", token)
-        .maybeSingle();
-
-      if (!link || link.used_at || new Date(link.expires_at) < new Date()) {
-        await sendMessage(
-          chatId,
-          "Посилання застаріло. Поділись номером — знайду оплату за ним.",
-          { reply_markup: CONTACT_KEYBOARD }
-        );
-        return NextResponse.json({ ok: true });
-      }
-
-      const { data: order } = await admin
-        .from("orders")
-        .select("id, email, user_id")
-        .eq("id", link.order_id!)
-        .maybeSingle();
-
+      const order = await orderByLinkToken(token);
       if (order) {
-        await admin
-          .from("telegram_links")
-          .update({ used_at: new Date().toISOString() })
-          .eq("token", token);
         await bindTelegram(order, chatId, msg.from?.username, null);
         await sendAccessLink(chatId, order, origin);
         return NextResponse.json({ ok: true });
       }
+      await sendMessage(
+        chatId,
+        "Посилання застаріло. Поділись номером — знайду оплату за ним.",
+        { reply_markup: CONTACT_KEYBOARD }
+      );
+      return NextResponse.json({ ok: true });
+    }
+
+    // Уже приходив — не питаємо номер удруге.
+    const known = await orderByTelegramId(chatId);
+    if (known) {
+      await sendAccessLink(chatId, known, origin);
+      return NextResponse.json({ ok: true });
     }
 
     await sendMessage(
       chatId,
       `Вітаю! Це бот <b>${brand.name}</b>.\n\n` +
-        "Щоб відкрити кабінет — поділись номером, на який оформлював оплату.",
+        "Щоб відкрити кабінет — поділись номером, на який оформлював оплату. " +
+        "Кнопка внизу 👇",
       { reply_markup: CONTACT_KEYBOARD }
     );
     return NextResponse.json({ ok: true });
   }
 
-  await sendMessage(
-    chatId,
-    "Щоб увійти в кабінет — надішли /start.",
-  );
+  // Будь-яке інше повідомлення: у того, хто вже входив, — одразу
+  // посилання; у решти — прохання поділитись номером.
+  const known = await orderByTelegramId(chatId);
+  if (known) {
+    await sendAccessLink(chatId, known, origin);
+  } else {
+    await sendMessage(
+      chatId,
+      "Щоб увійти в кабінет — поділись номером, на який оформлював оплату.",
+      { reply_markup: CONTACT_KEYBOARD }
+    );
+  }
   return NextResponse.json({ ok: true });
 }
 
-/** Номер до цифр: у базі й у Telegram формати різні (+380 / 380 / 0…). */
+type Order = { id: string; email: string; user_id: string | null };
+
+/** Номер до цифр: формати в базі й у Telegram різні (+380 / 380 / 0…). */
 function normalizePhone(raw: string): string {
   return raw.replace(/\D/g, "");
 }
 
+/**
+ * Шукає оплачене замовлення за номером.
+ * Порівнюємо останні 9 цифр — це національний номер без коду країни
+ * і без провідного нуля, тому +380671234567, 380671234567 і 0671234567
+ * дають однаковий збіг.
+ */
+async function findOrderByPhone(raw: string): Promise<Order | null> {
+  const tail = normalizePhone(raw).slice(-9);
+  if (tail.length < 9) return null;
+
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("orders")
+    .select("id, email, user_id")
+    .eq("status", "success")
+    .like("phone", `%${tail}`)
+    .order("created_at", { ascending: false })
+    .limit(1);
+
+  return data?.[0] ?? null;
+}
+
+/** Замовлення за вже прив'язаним Telegram — щоб не питати номер щоразу. */
+async function orderByTelegramId(chatId: number): Promise<Order | null> {
+  const admin = createAdminClient();
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("id, email")
+    .eq("telegram_id", chatId)
+    .maybeSingle();
+  if (!profile) return null;
+
+  // Доступ міг бути виданий вручну — тоді замовлення немає,
+  // але enrollment є. Перевіряємо саме доступ.
+  const { data: enrollment } = await admin
+    .from("enrollments")
+    .select("id")
+    .eq("user_id", profile.id)
+    .maybeSingle();
+  if (!enrollment) return null;
+
+  return { id: "", email: profile.email as string, user_id: profile.id };
+}
+
+/** Замовлення за одноразовим токеном із /thanks. */
+async function orderByLinkToken(token: string): Promise<Order | null> {
+  const admin = createAdminClient();
+  const { data: link } = await admin
+    .from("telegram_links")
+    .select("token, order_id, used_at, expires_at")
+    .eq("token", token)
+    .maybeSingle();
+
+  if (!link || link.used_at || new Date(link.expires_at) < new Date()) return null;
+
+  const { data: order } = await admin
+    .from("orders")
+    .select("id, email, user_id")
+    .eq("id", link.order_id!)
+    .maybeSingle();
+  if (!order) return null;
+
+  await admin
+    .from("telegram_links")
+    .update({ used_at: new Date().toISOString() })
+    .eq("token", token);
+
+  return order;
+}
+
 async function bindTelegram(
-  order: { id: string; email: string; user_id: string | null },
+  order: Order,
   chatId: number,
   username: string | undefined,
   phone: string | null
 ) {
   const admin = createAdminClient();
-  const { resolveUser } = await import("@/lib/auth/grant");
   const userId = order.user_id ?? (await resolveUser(order.email));
   if (!userId) return;
 
@@ -165,20 +232,15 @@ async function bindTelegram(
 
 /**
  * Надсилає одноразове посилання входу.
- * Токен живе в telegram_links і гаситься при використанні —
- * переслане посилання нікому доступу не відкриє.
+ * Токен гаситься при використанні — переслане посилання марне.
  */
-async function sendAccessLink(
-  chatId: number,
-  order: { id: string; email: string; user_id: string | null },
-  origin: string
-) {
+async function sendAccessLink(chatId: number, order: Order, origin: string) {
   const admin = createAdminClient();
   const token = generateLinkToken();
 
   await admin.from("telegram_links").insert({
     token,
-    order_id: order.id,
+    order_id: order.id || null,
     user_id: order.user_id,
     email: order.email,
     expires_at: new Date(Date.now() + 15 * 60_000).toISOString(),
@@ -195,4 +257,89 @@ async function sendAccessLink(
       },
     }
   );
+}
+
+/**
+ * /find <пошта|номер>  — подивитись, що є по клієнту
+ * /grant <пошта>       — відкрити доступ вручну
+ *
+ * Потрібні, коли номер у формі не збігся з номером у Telegram:
+ * інакше єдиний вихід — лізти в SQL.
+ */
+async function handleAdmin(chatId: number, text: string, origin: string) {
+  const admin = createAdminClient();
+
+  const { data: me } = await admin
+    .from("profiles")
+    .select("is_admin")
+    .eq("telegram_id", chatId)
+    .maybeSingle();
+
+  // Мовчимо для чужих: команда не має видавати, що вона існує.
+  if (!me?.is_admin) return NextResponse.json({ ok: true });
+
+  const [cmd, ...rest] = text.split(/\s+/);
+  const arg = rest.join(" ").trim().toLowerCase();
+
+  if (!arg) {
+    await sendMessage(chatId, `Формат: <code>${cmd} пошта або номер</code>`);
+    return NextResponse.json({ ok: true });
+  }
+
+  const isEmail = arg.includes("@");
+  const tail = normalizePhone(arg).slice(-9);
+
+  const query = admin
+    .from("orders")
+    .select("id, email, full_name, phone, status, amount, created_at, user_id")
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const { data: orders } = isEmail
+    ? await query.eq("email", arg)
+    : await query.like("phone", `%${tail}`);
+
+  if (!orders?.length) {
+    await sendMessage(chatId, "Нічого не знайшов 🤷");
+    return NextResponse.json({ ok: true });
+  }
+
+  if (cmd === "/find") {
+    const lines = orders.map((o) => {
+      const sum = (o.amount / 100).toFixed(2);
+      const date = new Date(o.created_at).toLocaleDateString("uk-UA");
+      return `<b>${o.email}</b>\n${o.full_name ?? "—"} · ${o.phone ?? "—"}\n${o.status} · ${sum} грн · ${date}`;
+    });
+    await sendMessage(chatId, lines.join("\n\n"));
+    return NextResponse.json({ ok: true });
+  }
+
+  // /grant — відкриваємо доступ за першим (найсвіжішим) замовленням.
+  const order = orders[0];
+  const userId = order.user_id ?? (await resolveUser(order.email));
+  if (!userId) {
+    await sendMessage(chatId, "Не вдалося створити користувача 😕");
+    return NextResponse.json({ ok: true });
+  }
+
+  await admin.from("enrollments").upsert(
+    { user_id: userId, order_id: order.id, source: "manual" },
+    { onConflict: "user_id" }
+  );
+
+  const token = generateLinkToken();
+  await admin.from("telegram_links").insert({
+    token,
+    order_id: order.id,
+    user_id: userId,
+    email: order.email,
+    expires_at: new Date(Date.now() + 24 * 3600_000).toISOString(),
+  });
+
+  await sendMessage(
+    chatId,
+    `Доступ відкрито для <b>${order.email}</b> ✅\n\n` +
+      `Перешли це посилання клієнту (діє добу):\n${origin}/tg/${token}`
+  );
+  return NextResponse.json({ ok: true });
 }
