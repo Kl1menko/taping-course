@@ -66,14 +66,14 @@ export default async function LessonPage({
         {/* ── заголовок ── */}
         <div className="mt-6 flex flex-wrap items-center gap-x-2.5 gap-y-1 text-xs">
           <span className="font-extrabold text-ink/30">{mod.number}</span>
-          <span className="text-ink/45">{mod.title}</span>
+          <span className="min-w-0 truncate text-ink/45">{mod.title}</span>
           <span className="text-ink/25">·</span>
           <span className="text-ink/45">
             урок {lIdx + 1} з {mod.lessons.length}
           </span>
         </div>
 
-        <h1 className="mt-2 text-xl font-extrabold leading-snug tracking-tight sm:text-3xl">
+        <h1 className="mt-2 text-[19px] font-extrabold leading-snug tracking-tight xs:text-xl sm:text-3xl">
           {lesson.title}
         </h1>
 
@@ -100,7 +100,7 @@ export default async function LessonPage({
           {next && (
             <Link
               href={`/cabinet/${next.module.slug}/${next.lesson.slug}`}
-              className="flex min-h-12 shrink-0 items-center gap-1.5 rounded-full bg-ink px-5 text-sm font-bold uppercase tracking-wide text-white transition active:brightness-125"
+              className="flex min-h-12 shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 text-[13px] font-bold uppercase tracking-wide text-white transition active:brightness-125 xs:px-5 xs:text-sm"
             >
               далі
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"

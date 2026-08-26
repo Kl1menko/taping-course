@@ -5,6 +5,8 @@ type Item = { module: ModuleWithLessons; lesson: Lesson } | undefined;
 
 // На мобільних «попередній/наступний» стають картками одна під одною —
 // у рядок вони стискаються так, що назви уроків не прочитати.
+// Назва в них займає до двох рядків: обрізати її на півслові гірше,
+// ніж віддати трохи висоти (line-clamp-2, на десктопі — один рядок).
 export default function LessonNav({ prev, next }: { prev: Item; next: Item }) {
   if (!prev && !next) return null;
 
@@ -17,14 +19,14 @@ export default function LessonNav({ prev, next }: { prev: Item; next: Item }) {
         >
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
                strokeLinecap="round" strokeLinejoin="round"
-               className="h-4 w-4 shrink-0 text-ink/35">
+               className="h-4 w-4 shrink-0 self-center text-ink/35">
             <path d="m15 18-6-6 6-6" />
           </svg>
           <span className="min-w-0">
             <span className="block text-[11px] font-bold uppercase tracking-widest text-ink/40">
               попередній
             </span>
-            <span className="mt-0.5 block truncate text-sm font-semibold">
+            <span className="mt-0.5 block text-sm font-semibold leading-snug line-clamp-2 sm:truncate">
               {prev.lesson.title}
             </span>
           </span>
@@ -42,7 +44,7 @@ export default function LessonNav({ prev, next }: { prev: Item; next: Item }) {
             <span className="block text-[11px] font-bold uppercase tracking-widest text-ink/40">
               наступний
             </span>
-            <span className="mt-0.5 block truncate text-sm font-semibold">
+            <span className="mt-0.5 block text-sm font-semibold leading-snug line-clamp-2 sm:truncate">
               {next.lesson.title}
             </span>
           </span>

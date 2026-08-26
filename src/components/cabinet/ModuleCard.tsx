@@ -29,10 +29,10 @@ export default function ModuleCard({
       <button
         onClick={() => setOpen((v) => !v)}
         aria-expanded={open}
-        className="flex w-full items-center gap-3.5 px-4 py-4 text-left transition active:bg-ink/[0.03] sm:gap-4 sm:px-8 sm:py-6"
+        className="flex w-full items-start gap-3.5 px-4 py-4 text-left sm:items-center transition active:bg-ink/[0.03] sm:gap-4 sm:px-8 sm:py-6"
       >
         <span
-          className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-full sm:h-12 sm:w-12 ${
+          className={`mt-0.5 flex h-11 w-11 shrink-0 items-center justify-center rounded-full sm:mt-0 sm:h-12 sm:w-12 ${
             complete ? "bg-lime text-ink" : "bg-ink/5 text-ink/45"
           }`}
           aria-hidden="true"
@@ -53,11 +53,11 @@ export default function ModuleCard({
         </span>
 
         <span className="flex min-w-0 flex-1 flex-col gap-2">
-          <span className="flex items-baseline gap-2">
+          <span className="flex items-baseline gap-2 min-w-0">
             <span className="shrink-0 text-xs font-extrabold text-ink/30">
               {m.number}
             </span>
-            <span className="truncate text-[15px] font-bold sm:text-xl">
+            <span className="min-w-0 text-[15px] font-bold leading-snug line-clamp-2 sm:truncate sm:text-xl">
               {m.title}
             </span>
           </span>
@@ -81,7 +81,7 @@ export default function ModuleCard({
         <svg
           viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
           strokeLinecap="round" strokeLinejoin="round"
-          className={`h-4 w-4 shrink-0 text-ink/30 transition-transform duration-300 ${
+          className={`mt-3.5 h-4 w-4 shrink-0 text-ink/30 transition-transform duration-300 sm:mt-0 ${
             open ? "rotate-180" : ""
           }`}
           aria-hidden="true"
@@ -124,7 +124,7 @@ export default function ModuleCard({
                   </span>
 
                   <span
-                    className={`min-w-0 flex-1 text-[14px] leading-snug sm:text-base ${
+                    className={`min-w-0 flex-1 text-[14px] leading-snug line-clamp-2 sm:line-clamp-none sm:text-base ${
                       isDone ? "text-ink/50" : ""
                     } ${isCurrent ? "font-semibold" : ""}`}
                   >

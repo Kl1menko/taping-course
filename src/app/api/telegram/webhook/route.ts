@@ -3,7 +3,8 @@ import { createAdminClient } from "@/lib/supabase/server";
 import {
   sendMessage,
   CONTACT_KEYBOARD,
-  REMOVE_KEYBOARD,
+  GUEST_KEYBOARD,
+  MAIN_KEYBOARD,
   type TgUpdate,
 } from "@/lib/telegram";
 import { generateLinkToken } from "@/lib/auth/session";
@@ -67,7 +68,7 @@ export async function POST(request: Request) {
         "За цим номером оплати не знайшлось 🤔\n\n" +
           "Таке буває, якщо при оформленні був інший номер. " +
           `Напиши ${brand.telegramHandle} — відкриємо доступ вручну, це швидко.`,
-        { reply_markup: REMOVE_KEYBOARD }
+        { reply_markup: GUEST_KEYBOARD }
       );
       return NextResponse.json({ ok: true });
     }
@@ -80,6 +81,37 @@ export async function POST(request: Request) {
   // ─── Адмінські команди ─────────────────────────────────────
   if (text.startsWith("/grant") || text.startsWith("/find")) {
     return handleAdmin(chatId, text, origin);
+  }
+
+  // ─── Кнопки постійного меню ────────────────────────────────
+  if (text.includes("Підтримка") || text.startsWith("/help")) {
+    await sendMessage(
+      chatId,
+      "Якщо щось не працює або не відкривається доступ — " +
+        `напиши ${brand.telegramHandle}, розберемось.\n\n` +
+        "Кнопка «Відкрити кабінет» щоразу видає свіже посилання — " +
+        "старе діє 15 хвилин.",
+      { reply_markup: MAIN_KEYBOARD }
+    );
+    return NextResponse.json({ ok: true });
+  }
+
+  if (text.includes("Мій прогрес") || text.startsWith("/progress")) {
+    return sendProgress(chatId);
+  }
+
+  if (text.includes("Відкрити кабінет")) {
+    const known = await orderByTelegramId(chatId);
+    if (known) {
+      await sendAccessLink(chatId, known, origin);
+    } else {
+      await sendMessage(
+        chatId,
+        "Спершу поділись номером, на який оформлював оплату 👇",
+        { reply_markup: GUEST_KEYBOARD }
+      );
+    }
+    return NextResponse.json({ ok: true });
   }
 
   // ─── /start ────────────────────────────────────────────────
@@ -113,7 +145,7 @@ export async function POST(request: Request) {
       `Вітаю! Це бот <b>${brand.name}</b>.\n\n` +
         "Щоб відкрити кабінет — поділись номером, на який оформлював оплату. " +
         "Кнопка внизу 👇",
-      { reply_markup: CONTACT_KEYBOARD }
+      { reply_markup: GUEST_KEYBOARD }
     );
     return NextResponse.json({ ok: true });
   }
@@ -122,12 +154,16 @@ export async function POST(request: Request) {
   // посилання; у решти — прохання поділитись номером.
   const known = await orderByTelegramId(chatId);
   if (known) {
-    await sendAccessLink(chatId, known, origin);
+    await sendMessage(
+      chatId,
+      "Обери дію кнопкою внизу 👇",
+      { reply_markup: MAIN_KEYBOARD }
+    );
   } else {
     await sendMessage(
       chatId,
       "Щоб увійти в кабінет — поділись номером, на який оформлював оплату.",
-      { reply_markup: CONTACT_KEYBOARD }
+      { reply_markup: GUEST_KEYBOARD }
     );
   }
   return NextResponse.json({ ok: true });
@@ -252,11 +288,67 @@ async function sendAccessLink(chatId: number, order: Order, origin: string) {
     {
       reply_markup: {
         inline_keyboard: [
-          [{ text: "Відкрити кабінет", url: `${origin}/tg/${token}` }],
+          [{ text: "🎓 Відкрити кабінет", url: `${origin}/tg/${token}` }],
         ],
       },
     }
   );
+
+  // Друге повідомлення ставить постійне меню: inline-кнопка з
+  // посиланням і reply-клавіатура — різні речі, разом не надсилаються.
+  await sendMessage(
+    chatId,
+    "Посилання діє 15 хвилин. Далі просто тисни «Відкрити кабінет» —" +
+      " бот видасть нове.",
+    { reply_markup: MAIN_KEYBOARD }
+  );
+}
+
+/** Прогрес по курсу — щоб не заходити в кабінет заради однієї цифри. */
+async function sendProgress(chatId: number) {
+  const admin = createAdminClient();
+
+  const { data: profile } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("telegram_id", chatId)
+    .maybeSingle();
+
+  if (!profile) {
+    await sendMessage(
+      chatId,
+      "Спершу поділись номером, на який оформлював оплату 👇",
+      { reply_markup: GUEST_KEYBOARD }
+    );
+    return NextResponse.json({ ok: true });
+  }
+
+  const [{ count: total }, { count: done }] = await Promise.all([
+    admin.from("lessons").select("id", { count: "exact", head: true }),
+    admin
+      .from("lesson_progress")
+      .select("lesson_id", { count: "exact", head: true })
+      .eq("user_id", profile.id)
+      .eq("completed", true),
+  ]);
+
+  const all = total ?? 0;
+  const finished = done ?? 0;
+  const pct = all ? Math.round((finished / all) * 100) : 0;
+  // Смужка з квадратиків: у Telegram немає прогрес-барів.
+  const filled = Math.round(pct / 10);
+  const bar = "🟩".repeat(filled) + "⬜".repeat(10 - filled);
+
+  await sendMessage(
+    chatId,
+    `<b>Твій прогрес</b>\n\n${bar}  ${pct}%\n\n` +
+      `Пройдено ${finished} з ${all} уроків.` +
+      (finished === all && all > 0
+        ? "\n\nКурс завершено 🎉"
+        : "\n\nТисни «Відкрити кабінет», щоб продовжити."),
+    { reply_markup: MAIN_KEYBOARD }
+  );
+  return NextResponse.json({ ok: true });
 }
 
 /**

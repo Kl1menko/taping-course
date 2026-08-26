@@ -26,7 +26,7 @@ export default async function CabinetPage() {
       <section className="rounded-3xl bg-ink p-5 text-white sm:rounded-4xl sm:p-10">
         <div className="flex items-start justify-between gap-4">
           <div>
-            <h1 className="text-xl font-extrabold tracking-tight sm:text-4xl">
+            <h1 className="text-lg font-extrabold tracking-tight xs:text-xl sm:text-4xl">
               {finished ? "Курс пройдено" : "Твій курс"}
             </h1>
             <p className="mt-1.5 text-[13px] text-white/55 sm:mt-3 sm:text-base">
@@ -35,7 +35,7 @@ export default async function CabinetPage() {
           </div>
 
           {/* Відсоток великим числом — головна метрика на вузькому екрані. */}
-          <span className="shrink-0 text-3xl font-extrabold tabular-nums text-lime sm:text-5xl">
+          <span className="shrink-0 text-[28px] font-extrabold tabular-nums leading-none text-lime xs:text-3xl sm:text-5xl">
             {pct}
             <span className="text-lg sm:text-2xl">%</span>
           </span>
@@ -57,7 +57,7 @@ export default async function CabinetPage() {
               <span className="block text-[10px] font-bold uppercase tracking-widest text-ink/50">
                 {done === 0 ? "почати навчання" : "продовжити"}
               </span>
-              <span className="mt-0.5 block truncate text-sm font-bold">
+              <span className="mt-0.5 block text-sm font-bold leading-snug line-clamp-2 sm:truncate">
                 {nextLesson.title}
               </span>
             </span>

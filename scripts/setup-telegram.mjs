@@ -46,6 +46,17 @@ if (mode === "--set") {
     drop_pending_updates: true,
   });
   console.log(res.ok ? `✅ вебхук зареєстровано: ${url}` : `❌ ${res.description}`);
+
+  // Команди в синьому меню біля поля вводу — щоб бот не виглядав
+  // порожнім для того, хто відкрив його вперше.
+  const cmds = await api("setMyCommands", {
+    commands: [
+      { command: "start", description: "Відкрити кабінет" },
+      { command: "progress", description: "Мій прогрес" },
+      { command: "help", description: "Допомога" },
+    ],
+  });
+  console.log(cmds.ok ? "✅ команди меню оновлено" : `❌ ${cmds.description}`);
   if (!secret) {
     console.log("⚠️  TELEGRAM_WEBHOOK_SECRET не заданий — вебхук відкритий для будь-кого.");
   }

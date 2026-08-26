@@ -48,9 +48,47 @@ export const CONTACT_KEYBOARD = {
   keyboard: [[{ text: "📱 Поділитись номером", request_contact: true }]],
   resize_keyboard: true,
   one_time_keyboard: true,
+  input_field_placeholder: "Натисни кнопку внизу 👇",
+};
+
+/**
+ * Постійне меню для тих, хто вже має доступ.
+ * Не one_time: кнопки лишаються під полем вводу назавжди, тому
+ * людина ніколи не опиняється перед порожнім чатом без підказки.
+ */
+export const MAIN_KEYBOARD = {
+  keyboard: [
+    [{ text: "🎓 Відкрити кабінет" }],
+    [{ text: "📚 Мій прогрес" }, { text: "💬 Підтримка" }],
+  ],
+  resize_keyboard: true,
+  is_persistent: true,
+  input_field_placeholder: "Обери дію 👇",
+};
+
+/** Меню для тих, хто ще не підтвердив оплату. */
+export const GUEST_KEYBOARD = {
+  keyboard: [
+    [{ text: "📱 Поділитись номером", request_contact: true }],
+    [{ text: "💬 Підтримка" }],
+  ],
+  resize_keyboard: true,
+  is_persistent: true,
+  input_field_placeholder: "Поділись номером, щоб увійти 👇",
 };
 
 export const REMOVE_KEYBOARD = { remove_keyboard: true };
+
+/** Команди в меню бота (синя кнопка «Menu» біля поля вводу). */
+export async function setBotCommands() {
+  return callTelegram("setMyCommands", {
+    commands: [
+      { command: "start", description: "Відкрити кабінет" },
+      { command: "progress", description: "Мій прогрес" },
+      { command: "help", description: "Допомога" },
+    ],
+  });
+}
 
 // ─── Типи апдейтів, які нас цікавлять ────────────────────────
 export type TgUser = {

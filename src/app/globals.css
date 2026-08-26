@@ -7,6 +7,15 @@
 html { scroll-behavior: smooth; scroll-padding-top: 96px; }
 body { background: theme(colors.cream); color: theme(colors.ink); }
 
+/* Жоден блок не має права розтягувати сторінку вбік: на телефоні це
+   зсуває весь макет і обрізає праві краї карток і кнопок.
+   Широкий контент (таблиця, код) має скролитись у своєму контейнері. */
+html, body { max-width: 100%; overflow-x: clip; }
+
+/* Довге слово без пробілів (посилання, назва мʼяза латиною) інакше
+   розпирає картку — на вузькому екрані це видно одразу. */
+body { overflow-wrap: break-word; }
+
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
   *, *::before, *::after {

@@ -4,6 +4,9 @@ export default {
   content: ["./src/**/*.{ts,tsx}"],
   theme: {
     extend: {
+      // 360px — межа малих телефонів (iPhone SE, старі Android).
+      // Нижче неї великий текст і горизонтальні пари кнопок не влазять.
+      screens: { xs: "360px" },
       colors: {
         ink: "#0E0E10",
         lime: "#DEFF3C",
