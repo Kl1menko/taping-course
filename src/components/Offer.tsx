@@ -98,15 +98,6 @@ export default function Offer() {
         {/* ── Скляна картка оплати ── */}
         <Reveal delay={120}>
           <div className="relative mx-auto mt-14 max-w-2xl">
-            {/* Стрілка вказує на картку — як у хіро на заголовок.
-                Схована на вузьких екранах: там для неї немає полів. */}
-            <div
-              aria-hidden="true"
-              className="pointer-events-none absolute -left-16 -top-10 hidden h-20 w-20 -scale-x-100 lg:block"
-            >
-              <ArrowScribble />
-            </div>
-
             <div className="rounded-[1.75rem] border border-white/40 bg-white/15 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.25rem] sm:p-10">
               {/* value stack */}
               <ul className="grid gap-2.5 sm:grid-cols-2">
@@ -131,7 +122,19 @@ export default function Offer() {
               </ul>
 
               {/* ── ціна ── */}
-              <div className="mt-9 border-t border-white/25 pt-8 text-center">
+              <div className="relative mt-9 border-t border-white/25 pt-8 text-center">
+                {/* Стрілка вказує саме на ціну — вона тут головна.
+                    Прив'язана до блоку ціни, а не до картки, тому
+                    лишається навпроти числа за будь-якої висоти
+                    списку вище. Схована на вузьких екранах: за межами
+                    картки там немає полів, куди її покласти. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-24 top-1/2 hidden h-20 w-20 -translate-y-1/2 -scale-x-100 lg:block"
+                >
+                  <ArrowScribble />
+                </div>
+
                 {hasPrice ? (
                   <>
                     {offer.oldPrice && (

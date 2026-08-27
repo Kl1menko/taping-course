@@ -8,7 +8,10 @@ import { BentoCard, BentoGlyph, BentoText, BentoTitle } from "./BentoCard";
 // остання картка зривалась у третій рядок сама.
 export default function Included() {
   return (
-    <section id="included" className="px-[10px] py-16 sm:py-24">
+    // Фон на всю ширину екрана, без бічних полів. Знизу відступу
+    // немає: далі йде FinalCta, і темна плита переходить у синю
+    // впритул — межу тримають круглі кути самого FinalCta.
+    <section id="included" className="pt-16 sm:pt-24">
       <div className="w-full bg-ink px-4 py-16 sm:px-8 sm:py-24 lg:px-12">
         <Reveal>
           <div className="mx-auto max-w-3xl text-center">
