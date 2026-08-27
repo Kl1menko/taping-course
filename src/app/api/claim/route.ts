@@ -29,20 +29,31 @@ export async function POST(request: Request) {
   }
 
   const admin = createAdminClient();
+
+  // Гасимо посилання тим самим запитом, що й читаємо: пара
+  // «прочитати → записати» пропустила б два паралельні claim.
+  // Гасимо ДО перевірки оплати — якщо оплати немає, нижче знімаємо
+  // позначку назад, щоб людина могла повторити після успішного платежу.
   const { data: order } = await admin
     .from("orders")
-    .select("id, email, user_id, amount, status, invoice_id, auto_login_used_at")
+    .update({ auto_login_used_at: new Date().toISOString() })
     .eq("reference", reference)
+    .is("auto_login_used_at", null)
+    .not("invoice_id", "is", null)
+    .select("id, email, user_id, amount, status, invoice_id")
     .maybeSingle();
 
-  if (!order || !order.invoice_id) {
-    return NextResponse.json({ error: "not found" }, { status: 404 });
+  // Немає рахунку — або його вже погасив паралельний запит.
+  if (!order) {
+    return NextResponse.json({ error: "not found or already used" }, { status: 409 });
   }
 
-  // Посилання вже спрацювало — далі лише через код чи Telegram.
-  if (order.auto_login_used_at) {
-    return NextResponse.json({ error: "already used" }, { status: 409 });
-  }
+  /** Повертає посилання в дію: оплату не підтверджено, вина не клієнта. */
+  const release = () =>
+    admin
+      .from("orders")
+      .update({ auto_login_used_at: null })
+      .eq("id", order.id);
 
   // Джерело правди — monobank, а не те, що прийшло в браузер.
   let paid = order.status === "success";
@@ -60,25 +71,21 @@ export async function POST(request: Request) {
       }
     } catch (e) {
       console.error("[claim] monobank недоступний", e);
+      await release();
       return NextResponse.json({ error: "provider unavailable" }, { status: 503 });
     }
   }
 
   if (!paid) {
+    await release();
     return NextResponse.json({ error: "not paid" }, { status: 402 });
   }
 
   const granted = await grantAccess(order);
   if (!granted) {
+    await release();
     return NextResponse.json({ error: "could not grant access" }, { status: 500 });
   }
-
-  // Гасимо посилання ДО видачі сесії: якщо вхід не вдасться, людина
-  // піде через код — це гірше, ніж лишити посилання багаторазовим.
-  await admin
-    .from("orders")
-    .update({ auto_login_used_at: new Date().toISOString() })
-    .eq("id", order.id);
 
   const ok = await signInAs(order.email);
 

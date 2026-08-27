@@ -14,20 +14,21 @@ export async function GET(
   const admin = createAdminClient();
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
 
+  // Гасимо токен умовним апдейтом, а не парою «прочитати → записати»:
+  // два паралельні переходи за одним посиланням інакше обидва пройшли б
+  // перевірку до того, як перший встиг записати used_at.
   const { data: link } = await admin
     .from("telegram_links")
-    .select("token, email, used_at, expires_at")
+    .update({ used_at: new Date().toISOString() })
     .eq("token", token)
+    .is("used_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .select("email")
     .maybeSingle();
 
-  if (!link || link.used_at || new Date(link.expires_at) < new Date() || !link.email) {
+  if (!link?.email) {
     return NextResponse.redirect(`${origin}/login?error=expired`);
   }
-
-  await admin
-    .from("telegram_links")
-    .update({ used_at: new Date().toISOString() })
-    .eq("token", token);
 
   const ok = await signInAs(link.email);
   return NextResponse.redirect(`${origin}${ok ? "/cabinet" : "/login?error=failed"}`);

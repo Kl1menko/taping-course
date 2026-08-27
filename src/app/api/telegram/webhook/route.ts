@@ -174,7 +174,8 @@ export async function POST(request: Request) {
   return NextResponse.json({ ok: true });
 }
 
-type Order = { id: string; email: string; user_id: string | null };
+// id — null, коли доступ виданий вручну й замовлення за ним немає.
+type Order = { id: string | null; email: string; user_id: string | null };
 
 /** Номер до цифр: формати в базі й у Telegram різні (+380 / 380 / 0…). */
 function normalizePhone(raw: string): string {
@@ -214,41 +215,43 @@ async function orderByTelegramId(chatId: number): Promise<Order | null> {
   if (!profile) return null;
 
   // Доступ міг бути виданий вручну — тоді замовлення немає,
-  // але enrollment є. Перевіряємо саме доступ.
+  // але enrollment є. Перевіряємо саме доступ, і саме активний:
+  // безстроковий (expires_at is null) або ще не вичерпаний. Та сама
+  // умова, що в has_course_access() і в hasAccess().
   const { data: enrollment } = await admin
     .from("enrollments")
     .select("id")
     .eq("user_id", profile.id)
+    .or(`expires_at.is.null,expires_at.gt.${new Date().toISOString()}`)
     .maybeSingle();
   if (!enrollment) return null;
 
-  return { id: "", email: profile.email as string, user_id: profile.id };
+  return { id: null, email: profile.email as string, user_id: profile.id };
 }
 
 /** Замовлення за одноразовим токеном із /thanks. */
 async function orderByLinkToken(token: string): Promise<Order | null> {
   const admin = createAdminClient();
+  // Умовний апдейт замість «прочитати → записати»: інакше два
+  // паралельні /start з одним токеном обидва пройшли б перевірку.
   const { data: link } = await admin
     .from("telegram_links")
-    .select("token, order_id, used_at, expires_at")
+    .update({ used_at: new Date().toISOString() })
     .eq("token", token)
+    .is("used_at", null)
+    .gt("expires_at", new Date().toISOString())
+    .select("order_id")
     .maybeSingle();
 
-  if (!link || link.used_at || new Date(link.expires_at) < new Date()) return null;
+  if (!link?.order_id) return null;
 
   const { data: order } = await admin
     .from("orders")
     .select("id, email, user_id")
-    .eq("id", link.order_id!)
+    .eq("id", link.order_id)
     .maybeSingle();
-  if (!order) return null;
 
-  await admin
-    .from("telegram_links")
-    .update({ used_at: new Date().toISOString() })
-    .eq("token", token);
-
-  return order;
+  return order ?? null;
 }
 
 async function bindTelegram(
@@ -281,7 +284,7 @@ async function sendAccessLink(chatId: number, order: Order, origin: string) {
 
   await admin.from("telegram_links").insert({
     token,
-    order_id: order.id || null,
+    order_id: order.id,
     user_id: order.user_id,
     email: order.email,
     expires_at: new Date(Date.now() + 15 * 60_000).toISOString(),
@@ -524,6 +527,15 @@ async function handleHomework(chatId: number, text: string, origin: string) {
     await sendMessage(
       chatId,
       "Формат: <code>/review &lt;id&gt; ok|no коментар</code>"
+    );
+    return NextResponse.json({ ok: true });
+  }
+
+  // id підставляється в like — без фільтра «%» матчив би довільні роботи.
+  if (!/^[0-9a-f]{4,}$/.test(shortId)) {
+    await sendMessage(
+      chatId,
+      "id роботи — щонайменше 4 символи з <code>0-9a-f</code>."
     );
     return NextResponse.json({ ok: true });
   }

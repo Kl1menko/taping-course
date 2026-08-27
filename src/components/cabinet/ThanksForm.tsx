@@ -100,6 +100,18 @@ export default function ThanksForm() {
             </Link>
           )}
 
+          {/* Сесію видати не вдалось, а кнопка бота ще не приїхала:
+              без цього людина щойно заплатила й дивиться на екран,
+              де немає жодної дії. Ведемо на /login — там той самий бот. */}
+          {!signedIn && !tgUrl && (
+            <Link
+              href="/login"
+              className="mt-7 block w-full rounded-full bg-ink px-8 py-4 text-center text-sm font-bold uppercase tracking-wide text-white transition hover:brightness-110"
+            >
+              увійти в кабінет
+            </Link>
+          )}
+
           {tgUrl && (
             <>
               <a

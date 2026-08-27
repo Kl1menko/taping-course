@@ -22,6 +22,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "valid email required" }, { status: 400 });
   }
 
+  // Номер — єдиний ключ до кабінету: бот шукає оплату саме за ним.
+  // Сміттєвий номер тут означає клієнта, який заплатив і не може зайти,
+  // тому валідацію з форми обов'язково дублюємо на сервері.
+  if (phone.length < 9) {
+    return NextResponse.json({ error: "valid phone required" }, { status: 400 });
+  }
+
   // Ціну беремо з сервера, а не з тіла запиту — інакше її можна підмінити.
   // Поки ціна не затверджена — приймаємо лише заявки, не оплати.
   if (offer.price === null) {
