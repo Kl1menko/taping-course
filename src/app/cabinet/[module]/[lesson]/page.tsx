@@ -1,10 +1,21 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getCourse, getProgress, hasAccess } from "@/lib/course";
+import {
+  flatten,
+  getCourse,
+  getProgress,
+  getSubmissions,
+  hasAccess,
+  isLessonLocked,
+  isSubmitted,
+  signPhotos,
+} from "@/lib/course";
 import NoAccess from "@/components/cabinet/NoAccess";
 import VideoPlayer from "@/components/cabinet/VideoPlayer";
 import LessonComplete from "@/components/cabinet/LessonComplete";
 import LessonNav from "@/components/cabinet/LessonNav";
+import Homework from "@/components/cabinet/Homework";
+import LessonLocked from "@/components/cabinet/LessonLocked";
 
 export default async function LessonPage({
   params,
@@ -16,7 +27,11 @@ export default async function LessonPage({
   const access = await hasAccess();
   if (!access) return <NoAccess />;
 
-  const [modules, progress] = await Promise.all([getCourse(), getProgress()]);
+  const [modules, progress, submissions] = await Promise.all([
+    getCourse(),
+    getProgress(),
+    getSubmissions(),
+  ]);
 
   const mIdx = modules.findIndex((m) => m.slug === moduleSlug);
   if (mIdx === -1) notFound();
@@ -27,14 +42,33 @@ export default async function LessonPage({
   const lesson = mod.lessons[lIdx];
 
   // Плаский список — щоб «далі» переходило між модулями.
-  const flat = modules.flatMap((m) =>
-    m.lessons.map((l) => ({ module: m, lesson: l }))
-  );
+  const flat = flatten(modules);
   const flatIdx = flat.findIndex((x) => x.lesson.id === lesson.id);
   const prev = flat[flatIdx - 1];
   const next = flat[flatIdx + 1];
 
+  // Урок під замком — показуємо, яку роботу треба здати, а не відео.
+  if (isLessonLocked(flat, flatIdx, submissions)) {
+    const blocker = flat
+      .slice(0, flatIdx)
+      .reverse()
+      .find(
+        (x) =>
+          x.lesson.assignments?.[0]?.is_required &&
+          !isSubmitted(submissions[x.lesson.id])
+      );
+    return <LessonLocked lesson={lesson} blocker={blocker} />;
+  }
+
+  const assignment = lesson.assignments?.[0] ?? null;
+  const submission = submissions[lesson.id] ?? null;
+  const photos = submission ? await signPhotos(submission.photos) : [];
+
   const isDone = !!progress[lesson.id];
+  // Наступний урок відкриється лише після здачі — не даємо натиснути «далі»,
+  // щоб людина не впиралась у екран замка.
+  const nextBlocked =
+    !!assignment?.is_required && !isSubmitted(submission);
 
   return (
     // pb-28 лишає місце під липку панель дій на мобільних.
@@ -83,13 +117,22 @@ export default async function LessonPage({
           </p>
         )}
 
+        {/* ── домашня робота ── */}
+        {assignment && (
+          <Homework
+            assignment={assignment}
+            submission={submission}
+            initialPhotos={photos}
+          />
+        )}
+
         {/* На десктопі кнопка лишається в потоці сторінки. */}
         <div className="mt-8 hidden sm:block">
           <LessonComplete lessonId={lesson.id} initialDone={isDone} />
         </div>
 
         {/* ── навігація між уроками ── */}
-        <LessonNav prev={prev} next={next} />
+        <LessonNav prev={prev} next={next} nextBlocked={nextBlocked} />
       </div>
 
       {/* ── липка панель дій: тільки мобільні ── */}
@@ -97,18 +140,26 @@ export default async function LessonPage({
         <div className="flex items-center gap-2.5">
           <LessonComplete lessonId={lesson.id} initialDone={isDone} compact />
 
-          {next && (
-            <Link
-              href={`/cabinet/${next.module.slug}/${next.lesson.slug}`}
-              className="flex min-h-12 shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 text-[13px] font-bold uppercase tracking-wide text-white transition active:brightness-125 xs:px-5 xs:text-sm"
-            >
-              далі
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                   strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
-                <path d="m9 18 6-6-6-6" />
-              </svg>
-            </Link>
-          )}
+          {next &&
+            (nextBlocked ? (
+              <a
+                href="#homework"
+                className="flex min-h-12 shrink-0 items-center rounded-full border border-ink/15 px-4 text-[13px] font-bold uppercase tracking-wide text-ink/55 xs:px-5 xs:text-sm"
+              >
+                здати дз
+              </a>
+            ) : (
+              <Link
+                href={`/cabinet/${next.module.slug}/${next.lesson.slug}`}
+                className="flex min-h-12 shrink-0 items-center gap-1.5 rounded-full bg-ink px-4 text-[13px] font-bold uppercase tracking-wide text-white transition active:brightness-125 xs:px-5 xs:text-sm"
+              >
+                далі
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                     strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                  <path d="m9 18 6-6-6-6" />
+                </svg>
+              </Link>
+            ))}
         </div>
       </div>
     </main>

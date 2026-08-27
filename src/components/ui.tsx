@@ -60,7 +60,7 @@ export function SectionTitle({
           transition={{ duration: 1.1, ease: "easeInOut" }}
           className="rounded-full px-4 py-1 sm:px-6"
           style={{
-            backgroundImage: "linear-gradient(#F4A8F2, #F4A8F2)",
+            backgroundImage: "linear-gradient(#4D7CFF, #4D7CFF)",
           }}
         />
         {rest ? <span> {rest}</span> : null}

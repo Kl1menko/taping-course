@@ -2,7 +2,7 @@
 
 import { offer, riskReversal, cta } from "@/content";
 import { Reveal } from "./ui";
-import ApplyButton from "./ApplyButton";
+import BuyButton from "./BuyButton";
 
 export default function Offer() {
   const hasPrice = offer.price !== null;
@@ -64,7 +64,7 @@ export default function Offer() {
             </div>
 
             <div className="mt-9">
-              <ApplyButton
+              <BuyButton
                 source="offer"
                 glass="iosLime"
                 className="w-full px-7 text-sm leading-tight tracking-tight sm:min-h-[64px] sm:text-base"
@@ -82,7 +82,7 @@ export default function Offer() {
                 >
                   <path d="M5 12h14M13 6l6 6-6 6" />
                 </svg>
-              </ApplyButton>
+              </BuyButton>
               <p className="mt-5 text-center text-xs leading-relaxed text-white/40">
                 {offer.underCta}
               </p>

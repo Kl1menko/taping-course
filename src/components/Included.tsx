@@ -1,6 +1,17 @@
 import { included } from "@/content";
 import { Reveal } from "./ui";
 import { MedicalIcon, type MedicalIconName } from "./icons";
+import { BentoCard, BentoGlyph, BentoText, BentoTitle } from "./BentoCard";
+
+// Бенто на 6 колонок під 6 карток: 3+3, далі 2+2+2.
+const SPAN = [
+  "lg:col-span-3",
+  "lg:col-span-3",
+  "lg:col-span-2",
+  "lg:col-span-2",
+  "lg:col-span-2",
+  "lg:col-span-2",
+];
 
 export default function Included() {
   return (
@@ -14,23 +25,30 @@ export default function Included() {
           </div>
         </Reveal>
 
-        <div className="mx-auto mt-14 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {included.items.map((item, i) => (
-            <Reveal key={item.name} delay={i * 70}>
-              <article className="h-full rounded-4xl border border-white/10 bg-white/[0.04] p-7 transition duration-300 hover:border-lime/40 hover:bg-white/[0.08]">
-                <span className="flex h-11 w-11 items-center justify-center rounded-full bg-lime text-ink">
-                  <MedicalIcon
-                    name={item.icon as MedicalIconName}
-                    className="h-[22px] w-[22px]"
-                  />
-                </span>
-                <h3 className="mt-6 text-sm font-extrabold uppercase tracking-widest text-lime">
-                  {item.name}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/60">{item.text}</p>
-              </article>
-            </Reveal>
-          ))}
+        <div className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-6">
+          {included.items.map((item, i) => {
+            const span = SPAN[i] ?? "lg:col-span-2";
+            const wide = span !== "lg:col-span-2";
+            const isLime = i % 3 === 1;
+            return (
+              <Reveal key={item.name} delay={i * 70} className={`h-full ${span}`}>
+                <BentoCard tone="dark" className="items-center text-center">
+                  <BentoGlyph accent={isLime ? "lime" : "blue"} size="lg">
+                    <MedicalIcon
+                      name={item.icon as MedicalIconName}
+                      className="h-8 w-8 sm:h-9 sm:w-9"
+                    />
+                  </BentoGlyph>
+                  <BentoTitle className={`mt-5 text-white ${wide ? "sm:text-2xl" : ""}`}>
+                    {item.name}
+                  </BentoTitle>
+                  <BentoText tone="dark" className="mt-2.5">
+                    {item.text}
+                  </BentoText>
+                </BentoCard>
+              </Reveal>
+            );
+          })}
         </div>
 
         <Reveal delay={400}>

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import type { Lesson, ModuleWithLessons } from "@/lib/course";
+import type { Lesson, ModuleWithLessons } from "@/lib/course-types";
 
 type Item = { module: ModuleWithLessons; lesson: Lesson } | undefined;
 
@@ -7,7 +7,16 @@ type Item = { module: ModuleWithLessons; lesson: Lesson } | undefined;
 // у рядок вони стискаються так, що назви уроків не прочитати.
 // Назва в них займає до двох рядків: обрізати її на півслові гірше,
 // ніж віддати трохи висоти (line-clamp-2, на десктопі — один рядок).
-export default function LessonNav({ prev, next }: { prev: Item; next: Item }) {
+export default function LessonNav({
+  prev,
+  next,
+  nextBlocked = false,
+}: {
+  prev: Item;
+  next: Item;
+  /** Наступний урок під замком, поки не здано ДЗ цього. */
+  nextBlocked?: boolean;
+}) {
   if (!prev && !next) return null;
 
   return (
@@ -35,26 +44,48 @@ export default function LessonNav({ prev, next }: { prev: Item; next: Item }) {
         <span className="hidden sm:block" />
       )}
 
-      {next && (
-        <Link
-          href={`/cabinet/${next.module.slug}/${next.lesson.slug}`}
-          className="group flex min-h-16 items-center gap-3 rounded-2xl border border-ink/10 bg-white p-4 transition active:bg-ink/[0.04] sm:hover:border-ink/25 sm:justify-end sm:text-right"
-        >
-          <span className="min-w-0 flex-1">
-            <span className="block text-[11px] font-bold uppercase tracking-widest text-ink/40">
-              наступний
+      {next &&
+        (nextBlocked ? (
+          // Замість посилання — підказка: клік по ньому впирався б в екран замка.
+          <a
+            href="#homework"
+            className="flex min-h-16 items-center gap-3 rounded-2xl border border-dashed border-ink/20 bg-ink/[0.02] p-4 transition active:bg-ink/5 sm:justify-end sm:text-right"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-[11px] font-bold uppercase tracking-widest text-ink/40">
+                наступний — після домашньої
+              </span>
+              <span className="mt-0.5 block text-sm font-semibold leading-snug line-clamp-2 text-ink/50 sm:truncate">
+                {next.lesson.title}
+              </span>
             </span>
-            <span className="mt-0.5 block text-sm font-semibold leading-snug line-clamp-2 sm:truncate">
-              {next.lesson.title}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8"
+                 strokeLinecap="round" strokeLinejoin="round"
+                 className="h-4 w-4 shrink-0 text-ink/35">
+              <rect x="4" y="10" width="16" height="11" rx="2" />
+              <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+            </svg>
+          </a>
+        ) : (
+          <Link
+            href={`/cabinet/${next.module.slug}/${next.lesson.slug}`}
+            className="group flex min-h-16 items-center gap-3 rounded-2xl border border-ink/10 bg-white p-4 transition active:bg-ink/[0.04] sm:hover:border-ink/25 sm:justify-end sm:text-right"
+          >
+            <span className="min-w-0 flex-1">
+              <span className="block text-[11px] font-bold uppercase tracking-widest text-ink/40">
+                наступний
+              </span>
+              <span className="mt-0.5 block text-sm font-semibold leading-snug line-clamp-2 sm:truncate">
+                {next.lesson.title}
+              </span>
             </span>
-          </span>
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-               strokeLinecap="round" strokeLinejoin="round"
-               className="h-4 w-4 shrink-0 text-ink/35">
-            <path d="m9 18 6-6-6-6" />
-          </svg>
-        </Link>
-      )}
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
+                 strokeLinecap="round" strokeLinejoin="round"
+                 className="h-4 w-4 shrink-0 text-ink/35">
+              <path d="m9 18 6-6-6-6" />
+            </svg>
+          </Link>
+        ))}
     </nav>
   );
 }

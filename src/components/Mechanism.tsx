@@ -1,6 +1,12 @@
 import { mechanism } from "@/content";
 import { Reveal } from "./ui";
 import { MedicalIcon, type MedicalIconName } from "./icons";
+import { BentoCard, BentoGlyph, BentoPill, BentoText, BentoTitle } from "./BentoCard";
+import ScribbleArrow from "./ScribbleArrow";
+
+// Бенто на 6 колонок під 4 кроки: 4+2 у першому рядку, 2+4 у другому.
+// Дзеркальні рядки — найдешевший спосіб не дати сітці читатись таблицею.
+const SPAN = ["lg:col-span-4", "lg:col-span-2", "lg:col-span-2", "lg:col-span-4"];
 
 export default function Mechanism() {
   return (
@@ -14,29 +20,50 @@ export default function Mechanism() {
           </div>
         </Reveal>
 
-        <ol className="mx-auto mt-14 grid max-w-5xl gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {mechanism.steps.map((step, i) => (
-            <Reveal key={step.n} delay={i * 90}>
-              <li className="h-full rounded-4xl border border-white/10 bg-white/[0.04] p-7 transition duration-300 hover:border-lime/40">
-                <div className="flex items-center justify-between">
-                  <span className="text-3xl font-extrabold text-lime">{step.n}</span>
-                  <span
-                    className="flex h-11 w-11 items-center justify-center rounded-full bg-white/[0.07] ring-1 ring-white/10"
-                    aria-hidden="true"
-                  >
-                    <MedicalIcon
-                      name={step.icon as MedicalIconName}
-                      className="h-[22px] w-[22px] text-lime"
+        <ol className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-6">
+          {mechanism.steps.map((step, i) => {
+            const span = SPAN[i] ?? "lg:col-span-3";
+            const wide = span === "lg:col-span-4";
+            const isLime = i % 2 === 0;
+            return (
+              <Reveal key={step.n} delay={i * 90} className={`h-full ${span}`}>
+                {/* На темній секції плита світлішає — сірої тут не буває. */}
+                <BentoCard as="li" tone="dark" className="relative z-0 items-center text-center">
+                  <BentoTitle className={`text-white ${wide ? "text-xl sm:text-3xl" : "sm:text-xl"}`}>
+                    {step.name}
+                  </BentoTitle>
+                  <BentoText tone="dark" className="mt-2.5">
+                    {step.text}
+                  </BentoText>
+
+                  {/* Пілюля з номером кроку — той самий носій кольору,
+                      що і в решті карток сторінки. */}
+                  <div className="mt-auto flex w-full justify-center pt-7">
+                    <BentoPill accent={isLime ? "lime" : "blue"}>
+                      <BentoGlyph accent={isLime ? "soft-light" : "soft-dark"} size="sm">
+                        <MedicalIcon
+                          name={step.icon as MedicalIconName}
+                          className="h-5 w-5"
+                        />
+                      </BentoGlyph>
+                      <span className="text-[11px] font-black uppercase tracking-widest">
+                        крок {step.n}
+                      </span>
+                    </BentoPill>
+                  </div>
+
+                  {/* Стрілка лише всередині рядка, не в його кінці:
+                      кроки 0→1 і 2→3 стоять поруч, 1→2 переносяться. */}
+                  {i % 2 === 0 && (
+                    <ScribbleArrow
+                      tone="lime"
+                      className="absolute -right-9 bottom-10 z-10 hidden h-12 w-12 lg:block"
                     />
-                  </span>
-                </div>
-                <h3 className="mt-5 text-sm font-extrabold uppercase tracking-widest text-white">
-                  {step.name}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-white/55">{step.text}</p>
-              </li>
-            </Reveal>
-          ))}
+                  )}
+                </BentoCard>
+              </Reveal>
+            );
+          })}
         </ol>
 
         <Reveal delay={400}>

@@ -1,10 +1,10 @@
 "use client";
 
-import { useApply } from "./ApplyModal";
+import { useCheckout } from "./CheckoutModal";
 import { track } from "@/lib/analytics";
 import GlassButton, { type Tone } from "./GlassButton";
 
-export default function ApplyButton({
+export default function BuyButton({
   children,
   className,
   source,
@@ -16,10 +16,10 @@ export default function ApplyButton({
   /** Скляний варіант — для головних CTA. */
   glass?: Tone;
 }) {
-  const { open } = useApply();
+  const { open } = useCheckout();
 
   const onClick = () => {
-    track("application_start", { source });
+    track("checkout_cta_click", { source });
     open();
   };
 

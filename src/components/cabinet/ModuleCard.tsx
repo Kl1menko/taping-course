@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { MedicalIcon, type MedicalIconName } from "@/components/icons";
-import type { ModuleWithLessons } from "@/lib/course";
+import { isSubmitted, type Submission, type ModuleWithLessons } from "@/lib/course-types";
 
 // Модуль-акордеон. На телефоні 24 уроки суцільним списком — це
 // нескінченний скрол, тому за замовчуванням розгорнутий лише той
@@ -11,11 +11,17 @@ import type { ModuleWithLessons } from "@/lib/course";
 export default function ModuleCard({
   module: m,
   progress,
+  submissions,
+  locked,
   defaultOpen,
   currentLessonId,
 }: {
   module: ModuleWithLessons;
   progress: Record<string, boolean>;
+  /** lesson_id → здача домашньої роботи. */
+  submissions: Record<string, Submission>;
+  /** lesson_id → урок закритий, поки не здано попереднє ДЗ. */
+  locked: Record<string, boolean>;
   defaultOpen: boolean;
   currentLessonId?: string;
 }) {
@@ -95,6 +101,10 @@ export default function ModuleCard({
           {m.lessons.map((l, i) => {
             const isDone = progress[l.id];
             const isCurrent = l.id === currentLessonId;
+            const isLocked = locked[l.id];
+            const submission = submissions[l.id];
+            const needsHomework =
+              !!l.assignments?.[0]?.is_required && !isSubmitted(submission);
 
             return (
               <li key={l.id} className="border-b border-ink/5 last:border-0">
@@ -102,7 +112,7 @@ export default function ModuleCard({
                   href={`/cabinet/${m.slug}/${l.slug}`}
                   className={`flex min-h-14 items-center gap-3.5 px-4 py-3 transition active:bg-ink/[0.05] sm:px-8 sm:py-4 sm:hover:bg-ink/[0.03] ${
                     isCurrent ? "bg-lime/15" : ""
-                  }`}
+                  } ${isLocked ? "opacity-55" : ""}`}
                 >
                   <span
                     className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full border text-[11px] font-bold ${
@@ -112,7 +122,14 @@ export default function ModuleCard({
                     }`}
                     aria-hidden="true"
                   >
-                    {isDone ? (
+                    {isLocked ? (
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                           strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"
+                           className="h-3 w-3">
+                        <rect x="4" y="10" width="16" height="11" rx="2" />
+                        <path d="M8 10V7a4 4 0 0 1 8 0v3" />
+                      </svg>
+                    ) : isDone ? (
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"
                            strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round"
                            className="h-3 w-3">
@@ -131,10 +148,22 @@ export default function ModuleCard({
                     {l.title}
                   </span>
 
-                  {l.duration_sec && (
-                    <span className="shrink-0 text-[11px] tabular-nums text-ink/35">
-                      {Math.round(l.duration_sec / 60)} хв
+                  {/* Статус ДЗ важливіший за хронометраж: саме він
+                      пояснює, чому наступний урок під замком. */}
+                  {needsHomework && !isLocked ? (
+                    <span className="shrink-0 rounded-full bg-ink/5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-ink/45">
+                      дз
                     </span>
+                  ) : submission?.status === "rework" ? (
+                    <span className="shrink-0 rounded-full bg-pink-deep/15 px-2.5 py-1 text-[10px] font-bold uppercase tracking-widest text-pink-deep">
+                      доопрацювати
+                    </span>
+                  ) : (
+                    l.duration_sec && (
+                      <span className="shrink-0 text-[11px] tabular-nums text-ink/35">
+                        {Math.round(l.duration_sec / 60)} хв
+                      </span>
+                    )
                   )}
                 </Link>
               </li>

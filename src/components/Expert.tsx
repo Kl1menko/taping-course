@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { expert } from "@/content";
 import { Reveal } from "./ui";
+import { BentoCard, BentoKicker, BentoTitle } from "./BentoCard";
 
 export default function Expert() {
   // Поки немає реальних даних про викладача — блок не показуємо.
@@ -19,7 +20,7 @@ export default function Expert() {
         </Reveal>
 
         <Reveal delay={100}>
-          <div className="mx-auto mt-14 grid max-w-5xl gap-8 rounded-4xl border border-ink/10 bg-white p-7 sm:p-10 md:grid-cols-[280px_1fr] md:items-start">
+          <BentoCard layout="bare" className="mx-auto mt-14 grid max-w-5xl gap-8 p-7 sm:p-10 md:grid-cols-[280px_1fr] md:items-start">
             {expert.photo && (
               <div className="relative aspect-[4/5] overflow-hidden rounded-3xl bg-ink/5">
                 <Image
@@ -33,13 +34,9 @@ export default function Expert() {
             )}
 
             <div>
-              <h3 className="text-2xl font-extrabold tracking-tight sm:text-3xl">
-                {expert.name}
-              </h3>
+              <BentoTitle className="text-2xl sm:text-3xl">{expert.name}</BentoTitle>
               {expert.role && (
-                <p className="mt-2 text-sm font-semibold text-pink-deep sm:text-base">
-                  {expert.role}
-                </p>
+                <BentoKicker className="mt-2">{expert.role}</BentoKicker>
               )}
 
               {expert.bio.map((p) => (
@@ -53,7 +50,7 @@ export default function Expert() {
                   {expert.facts.map((f) => (
                     <li
                       key={f}
-                      className="rounded-full bg-ink/5 px-4 py-2 text-xs font-semibold sm:text-sm"
+                      className="rounded-full bg-blue px-4 py-2 text-xs font-black uppercase tracking-wide text-white sm:text-sm"
                     >
                       {f}
                     </li>
@@ -61,7 +58,7 @@ export default function Expert() {
                 </ul>
               )}
             </div>
-          </div>
+          </BentoCard>
         </Reveal>
       </div>
     </section>

@@ -11,13 +11,16 @@ export type EventName =
   | "faq_open"
   | "offer_view"
   | "price_view"
-  | "quiz_start"
-  | "quiz_complete"
-  | "application_start"
-  | "application_submit"
   | "telegram_click"
+  // Воронка продажу: клік по CTA → відкрита модалка → перехід у monobank.
+  | "checkout_cta_click"
+  | "checkout_open"
   | "checkout_start"
-  | "purchase";
+  | "purchase"
+  // Онбординг у кабінеті: квіз тепер проходять уже після оплати.
+  | "onboarding_quiz_complete"
+  // Домашні роботи.
+  | "homework_submit";
 
 declare global {
   interface Window {

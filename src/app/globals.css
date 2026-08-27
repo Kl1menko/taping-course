@@ -77,7 +77,7 @@ body { overflow-wrap: break-word; }
   padding: 2px;
   background: conic-gradient(
     from var(--border-angle),
-    #DEFF3C, #F4A8F2, #C8B6FF, #DEFF3C
+    #CCFF00, #4D7CFF, #6E93FF, #CCFF00
   );
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor;

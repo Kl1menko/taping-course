@@ -1,9 +1,10 @@
 import { problem } from "@/content";
 import { Reveal } from "./ui";
+import { BentoCard, BentoKicker, BentoText } from "./BentoCard";
 
 export default function Problem() {
   return (
-    <section id="problem" className="bg-pink-soft py-16 sm:py-24">
+    <section id="problem" className="py-16 sm:py-24">
       <div className="wrap">
         <Reveal>
           <div className="mx-auto max-w-3xl text-center">
@@ -22,7 +23,7 @@ export default function Problem() {
         <div className="mx-auto mt-12 grid max-w-5xl gap-3 sm:gap-4 lg:grid-cols-6">
           {/* Відео: найбільший блок сітки */}
           <Reveal delay={80} className="lg:col-span-4">
-            <div className="relative h-full overflow-hidden rounded-[1.75rem] bg-ink p-6 ring-1 ring-white/10 sm:p-8">
+            <div className="relative h-full overflow-hidden rounded-[1.75rem] bg-ink p-6 sm:rounded-[2rem] sm:p-8">
               {/* Відео-фон: без звуку, зациклене, autoplay.
                   playsInline обов'язковий — інакше iOS відкриє його
                   на весь екран замість програвання на місці. */}
@@ -61,46 +62,46 @@ export default function Problem() {
           {/* Що насправді треба розуміти — вузький високий блок.
               Раніше problem.needToUnderstand не використовувався ніде. */}
           <Reveal delay={140} className="lg:col-span-2">
-            <div className="h-full rounded-[1.75rem] bg-ink/[0.04] p-6 ring-1 ring-ink/10 sm:p-7">
-              <p className="text-[11px] font-bold uppercase tracking-widest text-ink/40">
-                Насправді треба розуміти
-              </p>
-              <ul className="mt-4 space-y-2">
+            <BentoCard>
+              <BentoKicker>Насправді треба розуміти</BentoKicker>
+              <ul className="mt-4 space-y-2.5">
                 {problem.needToUnderstand.map((n) => (
-                  <li key={n} className="flex gap-2.5 text-sm leading-snug text-ink/70">
+                  <li key={n} className="flex gap-2.5">
                     <span
                       aria-hidden="true"
-                      className="mt-[7px] h-1.5 w-1.5 shrink-0 rounded-full bg-pink-deep"
+                      className="mt-[9px] h-1.5 w-1.5 shrink-0 rounded-full bg-blue"
                     />
-                    {n}
+                    <BentoText>{n}</BentoText>
                   </li>
                 ))}
               </ul>
-            </div>
+            </BentoCard>
           </Reveal>
 
           {/* Чотири проблеми — по півтори колонки кожна */}
           {problem.items.map((item, i) => (
             <Reveal key={item} delay={200 + i * 70} className="lg:col-span-3">
-              <div className="flex h-full items-start gap-3.5 rounded-[1.75rem] bg-white p-5 ring-1 ring-ink/[0.07] sm:p-6">
+              <BentoCard className="flex-row items-start gap-3.5 p-5 sm:p-6">
                 <span
-                  className="mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-ink/5"
+                  className="mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-blue text-white"
                   aria-hidden="true"
                 >
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"
-                       strokeLinecap="round" className="h-3 w-3 text-ink/50">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3"
+                       strokeLinecap="round" className="h-3.5 w-3.5">
                     <path d="M18 6 6 18M6 6l12 12" />
                   </svg>
                 </span>
-                <p className="text-sm font-semibold leading-snug sm:text-base">{item}</p>
-              </div>
+                <p className="text-sm font-black uppercase leading-[1.15] tracking-tight sm:text-base">
+                  {item}
+                </p>
+              </BentoCard>
             </Reveal>
           ))}
 
           {/* Висновок — на всю ширину сітки, як фінальний акорд */}
           <Reveal delay={480} className="lg:col-span-6">
-            <div className="rounded-[1.75rem] bg-ink p-7 text-center sm:p-9">
-              <p className="text-lg font-extrabold leading-snug tracking-tight text-white sm:text-2xl">
+            <div className="rounded-[1.75rem] bg-lime p-7 text-center shadow-lg sm:rounded-[2rem] sm:p-9">
+              <p className="text-lg font-black uppercase leading-[1.1] tracking-tight text-ink sm:text-3xl">
                 {problem.key}
               </p>
             </div>

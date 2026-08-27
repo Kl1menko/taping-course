@@ -39,7 +39,7 @@ const TONES: Record<Tone, { tint: string; text: string; edge: string }> = {
   },
   // Скло з відтінком бренду.
   lime: {
-    tint: "rgba(222,255,60,0.92)",
+    tint: "rgba(204,255,0,0.96)",
     text: "text-ink",
     edge: "rgba(255,255,255,0.6)",
   },
@@ -60,9 +60,10 @@ const TONES: Record<Tone, { tint: string; text: string; edge: string }> = {
   // Сіре скло на світлому фоні втрачало вагу — головна дія має
   // лишатись найпомітнішою на екрані.
   iosLime: {
-    tint: "rgba(222,255,60,0.95)",
+    // Той самий кислотний лайм, що в бейджі й акцентах хіро.
+    tint: "rgba(204,255,0,1)",
     text: "text-ink",
-    edge: "rgba(163,190,40,0.8)",
+    edge: "rgba(154,192,0,0.85)",
   },
 };
 
@@ -78,14 +79,17 @@ const INNER_SHADOW = [
 
 // Тіні варіанта iOS 26 — помітно делікатніші (1–3px замість 4–6),
 // тому винесені окремо, а не масштабуються з набору вище.
-const iosInnerShadow = (edge: string) =>
+const iosInnerShadow = (edge: string, muted = false) =>
   [
     "inset 3px 3px 0.5px -3.5px #fff",
     "inset 2px 2px 0.5px -2px #262626",
     "inset -2px -2px 0.5px -2px #262626",
     `inset 0 0 0 1px ${edge}`,
-    "inset 0 0 8px 0 rgba(242,242,242,0.6)",
-  ].join(", ");
+    // Сіре світіння вибілює насичені кольори — для лайму вимикаємо.
+    muted ? "" : "inset 0 0 8px 0 rgba(242,242,242,0.6)",
+  ]
+    .filter(Boolean)
+    .join(", ");
 
 // М'які зовнішні тіні — саме вони відривають кнопку від світлого фону.
 const IOS_OUTER_SHADOW =
@@ -110,6 +114,8 @@ export default function GlassButton({
   const t = TONES[tone];
   // Обидва iOS-тони ділять ту саму геометрію тіней і розмиття.
   const isIos = tone === "ios" || tone === "iosDark" || tone === "iosLime";
+  // Насичені кольори не терплять сірого світіння всередині.
+  const isLime = tone === "lime" || tone === "iosLime";
 
   const content = (
     <>
@@ -140,7 +146,7 @@ export default function GlassButton({
       <span
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 rounded-full"
-        style={{ boxShadow: isIos ? iosInnerShadow(t.edge) : INNER_SHADOW }}
+        style={{ boxShadow: isIos ? iosInnerShadow(t.edge, isLime) : INNER_SHADOW }}
       />
 
       {/* Дзеркальний блік згори */}

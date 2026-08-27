@@ -14,7 +14,18 @@ export const brand = {
   tagline: "системне навчання кінезіологічному тейпуванню",
   telegram: "https://t.me/kotova_taping",
   telegramHandle: "@kotova_taping",
-  instagram: "https://instagram.com/kotova_taping",
+  instagram: "https://www.instagram.com/kotova_taping",
+  instagramHandle: "@kotova_taping",
+  // Кількість підписників для картки в хіро. Оновлювати вручну —
+  // Instagram не віддає це число без бізнес-акаунта й токена.
+  instagramFollowers: "26,9 тис.",
+  tiktok: "https://www.tiktok.com/@kotova_taping",
+  tiktokHandle: "@kotova_taping",
+  // Так само вручну: TikTok теж не віддає це число публічно.
+  tiktokFollowers: "53 тис.",
+  // Аватарка з TikTok для картки в хіро. Покласти файл у public/
+  // і вписати шлях; поки порожньо — береться expert.photo.
+  tiktokPhoto: "",
   email: "hello@kotovataping.com",
 };
 
@@ -38,10 +49,10 @@ export const nav = [
 
 // Єдиний головний CTA на весь сайт.
 export const cta = {
-  primary: "Дізнатися, чи підходить курс",
+  primary: "Купити курс",
   // Для вузьких місць: липка панель на мобільних, картка офера.
   // Довгий варіант там з'їдає місце й обрізає сусідній текст.
-  primaryShort: "Дізнатися більше",
+  primaryShort: "Купити курс",
   secondary: "Подивитися програму",
   secondaryHref: "#program",
 };
@@ -299,7 +310,7 @@ export const expert = {
   title: "Навчайтеся у практика, який працює з тейпуванням не лише на слайдах",
   name: "",              // ← ім'я викладача
   role: "",              // ← спеціалізація
-  photo: "/about.jpg",
+  photo: "/expert.jpg",
   bio: [] as string[],   // ← 2-3 абзаци
   facts: [] as string[], // ← 3-5 підтверджених фактів
 };
@@ -415,7 +426,7 @@ export const offer = {
   priceNote: "Оплата карткою. Рахунок у гривні за курсом НБУ.",
   priceHidden: "Ціну та умови участі надсилаємо у відповідь на заявку.",
 
-  underCta: "Заявка → підтвердження умов → доступ до навчання.",
+  underCta: "Оплата → доступ до кабінету одразу → перший урок сьогодні.",
 };
 
 // ─── 16. QUALIFICATION FORM ──────────────────────────────────

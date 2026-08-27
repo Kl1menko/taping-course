@@ -21,6 +21,7 @@ import { brand } from "@/content";
  *   /start <token> — прийшла з /thanks: токен уже прив'язаний до оплати;
  *   /start         — прийшла сама: питаємо номер і шукаємо оплату;
  *   /grant …       — адмін відкриває доступ вручну, якщо номер не збігся.
+ *   /hw, /review … — куратор дивиться й оцінює домашні роботи.
  *
  * Захист: Telegram не підписує запити, тому в URL вебхука кладеться
  * секрет, який Telegram віддає заголовком.
@@ -79,6 +80,10 @@ export async function POST(request: Request) {
   }
 
   // ─── Адмінські команди ─────────────────────────────────────
+  if (text.startsWith("/hw") || text.startsWith("/review")) {
+    return handleHomework(chatId, text, origin);
+  }
+
   if (text.startsWith("/grant") || text.startsWith("/find")) {
     return handleAdmin(chatId, text, origin);
   }
@@ -432,6 +437,154 @@ async function handleAdmin(chatId: number, text: string, origin: string) {
     chatId,
     `Доступ відкрито для <b>${order.email}</b> ✅\n\n` +
       `Перешли це посилання клієнту (діє добу):\n${origin}/tg/${token}`
+  );
+  return NextResponse.json({ ok: true });
+}
+
+
+/** Чи є цей Telegram-акаунт адміном. Мовчимо для чужих: команда
+    не має видавати, що вона взагалі існує. */
+async function isCurator(chatId: number): Promise<boolean> {
+  const admin = createAdminClient();
+  const { data } = await admin
+    .from("profiles")
+    .select("is_admin")
+    .eq("telegram_id", chatId)
+    .maybeSingle();
+  return !!data?.is_admin;
+}
+
+/**
+ * Перевірка домашніх робіт із бота.
+ *
+ *   /hw                        — черга робіт на перевірці
+ *   /review <id> ok [коментар] — прийняти
+ *   /review <id> no <коментар> — відправити на доопрацювання
+ *
+ * Вердикт не блокує рух курсом (наступний урок відкриває сама здача),
+ * але «на доопрацювання» повертає роботу студентові з коментарем.
+ */
+async function handleHomework(chatId: number, text: string, origin: string) {
+  if (!(await isCurator(chatId))) return NextResponse.json({ ok: true });
+
+  const admin = createAdminClient();
+  const [cmd, ...rest] = text.split(/\s+/);
+
+  // ─── /hw: черга ────────────────────────────────────────────
+  if (cmd === "/hw") {
+    const { data: queue } = await admin
+      .from("submissions")
+      .select("id, text, submitted_at, user_id, lessons(title)")
+      .eq("status", "submitted")
+      .order("submitted_at", { ascending: true })
+      .limit(10);
+
+    if (!queue?.length) {
+      await sendMessage(chatId, "Черга порожня — усе перевірено ✅");
+      return NextResponse.json({ ok: true });
+    }
+
+    // Пошта студента не лежить у submissions — беремо з профілів одним запитом.
+    const { data: people } = await admin
+      .from("profiles")
+      .select("id, email")
+      .in("id", queue.map((q) => q.user_id));
+    const emailById = Object.fromEntries(
+      (people ?? []).map((p) => [p.id, p.email ?? "—"])
+    );
+
+    const lines = queue.map((q) => {
+      const lesson =
+        (q.lessons as unknown as { title: string } | null)?.title ?? "—";
+      const when = q.submitted_at
+        ? new Date(q.submitted_at).toLocaleDateString("uk-UA")
+        : "—";
+      // Короткий id: повний ніхто не набере руками, а перших 8 символів
+      // вистачає, щоб знайти рядок серед десятка робіт у черзі.
+      return (
+        `<code>${q.id.slice(0, 8)}</code> · ${emailById[q.user_id]}\n` +
+        `${lesson} · ${when}\n${q.text.slice(0, 200)}`
+      );
+    });
+
+    await sendMessage(
+      chatId,
+      `Робіт на перевірці: ${queue.length}\n\n${lines.join("\n\n")}\n\n` +
+        `Фото — у кабінеті: ${origin}/cabinet\n` +
+        `Вердикт: <code>/review &lt;id&gt; ok|no коментар</code>`
+    );
+    return NextResponse.json({ ok: true });
+  }
+
+  // ─── /review: вердикт ──────────────────────────────────────
+  const [shortId, verdict, ...commentParts] = rest;
+  const comment = commentParts.join(" ").trim();
+
+  if (!shortId || !["ok", "no"].includes(verdict ?? "")) {
+    await sendMessage(
+      chatId,
+      "Формат: <code>/review &lt;id&gt; ok|no коментар</code>"
+    );
+    return NextResponse.json({ ok: true });
+  }
+
+  if (verdict === "no" && !comment) {
+    await sendMessage(chatId, "Для доопрацювання потрібен коментар — що виправити.");
+    return NextResponse.json({ ok: true });
+  }
+
+  const { data: found } = await admin
+    .from("submissions")
+    .select("id, user_id")
+    .like("id", `${shortId}%`)
+    .limit(2);
+
+  if (!found?.length) {
+    await sendMessage(chatId, "Не знайшов такої роботи 🤷");
+    return NextResponse.json({ ok: true });
+  }
+  if (found.length > 1) {
+    await sendMessage(chatId, "Кілька робіт із таким початком id — вкажи більше символів.");
+    return NextResponse.json({ ok: true });
+  }
+
+  const submission = found[0];
+  const { data: curator } = await admin
+    .from("profiles")
+    .select("id")
+    .eq("telegram_id", chatId)
+    .maybeSingle();
+
+  await admin
+    .from("submissions")
+    .update({
+      status: verdict === "ok" ? "accepted" : "rework",
+      feedback: comment || null,
+      reviewed_by: curator?.id ?? null,
+      reviewed_at: new Date().toISOString(),
+    })
+    .eq("id", submission.id);
+
+  // Студентові — повідомлення в Telegram, якщо він привʼязав акаунт.
+  const { data: student } = await admin
+    .from("profiles")
+    .select("telegram_id")
+    .eq("id", submission.user_id)
+    .maybeSingle();
+
+  if (student?.telegram_id) {
+    await sendMessage(
+      Number(student.telegram_id),
+      verdict === "ok"
+        ? `Домашню роботу прийнято ✅${comment ? `\n\n${comment}` : ""}`
+        : `Домашню роботу повернули на доопрацювання 🔁\n\n${comment}\n\n` +
+            `Виправ і надішли ще раз: ${origin}/cabinet`
+    );
+  }
+
+  await sendMessage(
+    chatId,
+    verdict === "ok" ? "Прийнято ✅" : "Відправлено на доопрацювання 🔁"
   );
   return NextResponse.json({ ok: true });
 }

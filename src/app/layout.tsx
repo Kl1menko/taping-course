@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import "./globals.css";
-import { ApplyProvider } from "@/components/ApplyModal";
+import { CheckoutProvider } from "@/components/CheckoutModal";
 
 export const metadata: Metadata = {
   title: "Системне навчання кінезіологічному тейпуванню | Kotova Taping Academy",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#F4F2F0",
+  themeColor: "#F8F9FA",
   width: "device-width",
   initialScale: 1,
 };
@@ -45,7 +45,7 @@ export default function RootLayout({
         />
       </head>
       <body className="font-sans antialiased">
-        <ApplyProvider>{children}</ApplyProvider>
+        <CheckoutProvider>{children}</CheckoutProvider>
       </body>
     </html>
   );

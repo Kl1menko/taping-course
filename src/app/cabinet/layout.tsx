@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 // Кабінет відкривають переважно з телефона, часто в залі чи на практиці —
 // тому інтерфейс мобільний-first: великі дотикові цілі, мінімум хрому.
 export const viewport = {
-  themeColor: "#F4F2F0",
+  themeColor: "#F8F9FA",
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover" as const,

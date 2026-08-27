@@ -1,20 +1,53 @@
 import Link from "next/link";
-import { getCourse, getProgress, hasAccess } from "@/lib/course";
+import {
+  flatten,
+  getCourse,
+  getProgress,
+  getQuizAnswers,
+  getSubmissions,
+  hasAccess,
+  isLessonLocked,
+} from "@/lib/course";
 import NoAccess from "@/components/cabinet/NoAccess";
 import ModuleCard from "@/components/cabinet/ModuleCard";
+import OnboardingQuiz from "@/components/cabinet/OnboardingQuiz";
 
 export default async function CabinetPage() {
   const access = await hasAccess();
   if (!access) return <NoAccess />;
 
-  const [modules, progress] = await Promise.all([getCourse(), getProgress()]);
+  const [modules, progress, submissions, quiz] = await Promise.all([
+    getCourse(),
+    getProgress(),
+    getSubmissions(),
+    getQuizAnswers(),
+  ]);
+
+  // Анкету проходимо один раз, до першого уроку: далі кабінет
+  // виглядає звично, і питання більше не спливають.
+  if (quiz === null) {
+    return (
+      <main className="mx-auto max-w-2xl px-4 py-5 sm:px-5 sm:py-12">
+        <OnboardingQuiz />
+      </main>
+    );
+  }
+
+  const flat = flatten(modules);
+  // lesson_id → чи закритий урок, поки не здано попереднє ДЗ.
+  const locked = Object.fromEntries(
+    flat.map((x, i) => [x.lesson.id, isLessonLocked(flat, i, submissions)])
+  );
 
   const allLessons = modules.flatMap((m) => m.lessons);
   const done = allLessons.filter((l) => progress[l.id]).length;
   const pct = allLessons.length ? Math.round((done / allLessons.length) * 100) : 0;
 
   // Наступний непройдений урок — для кнопки «продовжити».
-  const nextLesson = allLessons.find((l) => !progress[l.id]) ?? allLessons[0];
+  const nextLesson =
+    allLessons.find((l) => !progress[l.id] && !locked[l.id]) ??
+    allLessons.find((l) => !locked[l.id]) ??
+    allLessons[0];
   const nextModule = modules.find((m) =>
     m.lessons.some((l) => l.id === nextLesson?.id)
   );
@@ -76,6 +109,8 @@ export default async function CabinetPage() {
             key={m.id}
             module={m}
             progress={progress}
+            submissions={submissions}
+            locked={locked}
             // Відкриваємо лише модуль, де людина зупинилась.
             defaultOpen={m.id === nextModule?.id}
             currentLessonId={nextLesson?.id}

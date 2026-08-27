@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { offer, cta } from "@/content";
-import ApplyButton from "./ApplyButton";
+import BuyButton from "./BuyButton";
 
 // Постійна нижня панель на мобільних (вимога ТЗ, mobile-first).
 export default function StickyCta() {
@@ -36,13 +36,13 @@ export default function StickyCta() {
           </p>
         </div>
 
-        <ApplyButton
+        <BuyButton
           source="sticky"
           glass="iosLime"
           className="!min-h-[46px] shrink-0 px-6 text-xs"
         >
           {cta.primaryShort}
-        </ApplyButton>
+        </BuyButton>
       </div>
     </div>
   );
