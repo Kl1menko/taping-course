@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { motion } from "motion/react";
-import { hero, cta, offer, brand, expert } from "@/content";
+import { hero, cta, brand, expert } from "@/content";
 import BuyButton from "./BuyButton";
 import { track } from "@/lib/analytics";
 
@@ -50,41 +50,6 @@ const ArrowScribbleRight = () => (
     <path d="M65,75 L50,80 L55,65" />
   </svg>
 );
-
-/** Круглий бейдж із текстом по колу — акцент на ціні. */
-const PriceBadge = () => {
-  const ring =
-    offer.price !== null
-      ? `${offer.price.toLocaleString("uk-UA")} ${offer.currency} · ДОСТУП ОДРАЗУ · `
-      : "СТАРТ НАВЧАННЯ · ДОСТУП ОДРАЗУ · ";
-
-  return (
-    <div
-      style={{ backgroundColor: ACID }}
-      className="relative flex h-28 w-28 rotate-12 cursor-pointer items-center justify-center rounded-full border-[3px] border-black/5 shadow-xl transition-transform hover:scale-105 md:h-36 md:w-36">
-      {/* 10s — повний оберт: швидше виглядає нервово на такому діаметрі. */}
-      <div className="absolute inset-1 motion-safe:animate-[spin_16s_linear_infinite]">
-        <svg viewBox="0 0 100 100" className="h-full w-full" aria-hidden="true">
-          <path
-            id="priceBadgePath"
-            d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0"
-            fill="none"
-          />
-          <text className="text-[10px] font-black uppercase tracking-[0.14em]" fill="#0E0E10">
-            <textPath href="#priceBadgePath" startOffset="0%">
-              {ring.repeat(2)}
-            </textPath>
-          </text>
-        </svg>
-      </div>
-      <svg viewBox="0 0 100 100" className="h-9 w-9 overflow-visible stroke-current text-ink"
-           fill="none" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-        <path d="M20,80 Q 40,50 30,30 T 80,20" />
-        <path d="M60,10 L80,20 L70,40" />
-      </svg>
-    </div>
-  );
-};
 
 /**
  * Скляна картка викладача — накладка хіро.
@@ -250,11 +215,23 @@ export default function Hero() {
               <ExpertCard />
             </motion.div>
 
-            {/* Бейдж праворуч-унизу, поза колонкою тексту: він найяскравіший
-                елемент і не має конкурувати із заголовком за те саме місце. */}
-            <div className="pointer-events-auto absolute -bottom-[34%] right-[2%] z-40 lg:-right-[9%]">
-              <PriceBadge />
-            </div>
+            {/* Картка TikTok праворуч-угорі — під кнопкою «Кабінет»
+                у шапці. Нахил у інший бік, ніж у картки Instagram
+                ліворуч: разом вони читаються як приклеєні поляроїди,
+                а не як дві колонки сітки. */}
+            <motion.div
+              initial={{ rotate: 12 }}
+              animate={{ y: [0, -14, 0], rotate: 12 }}
+              transition={{
+                // Період інший, ніж у лівої картки (5.5s): однакові
+                // зробили б рух двох карток синхронним і механічним.
+                y: { duration: 6.5, repeat: Infinity, ease: "easeInOut" },
+                rotate: { duration: 0 },
+              }}
+              className="pointer-events-auto absolute -top-[6%] right-[2%] z-30 lg:-right-[12%]"
+            >
+              <ExpertCard network="tiktok" />
+            </motion.div>
           </div>
         </div>
 
