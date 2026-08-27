@@ -1,52 +1,69 @@
 import { brand, footer, nav } from "@/content";
 
+// ── Підвал ──
+//
+// Темний (ink), а не синій: одразу над ним лежить синя плита
+// «Контакти», і ще один синій блок читався б як її продовження.
+// Темний хвіст замикає сторінку й відбиває контакти, лишаючись
+// у тій самій палітрі — лаймові акценти ті самі, що всюди.
+
 const SOCIALS = [
   { label: "Telegram", href: brand.telegram },
   { label: "Instagram", href: brand.instagram },
+  { label: "TikTok", href: brand.tiktok },
 ];
+
+// Спільний вигляд для посилань-пігулок у навігації та соцмережах.
+const pill =
+  "inline-block rounded-full border border-white/20 px-4 py-1.5 text-sm text-white/80 transition hover:border-lime hover:bg-lime hover:text-ink";
+
+const heading =
+  "text-[11px] font-black uppercase tracking-widest text-white/45";
 
 export default function Footer() {
   return (
     <footer className="px-[10px] pb-[10px]">
-      <div className="w-full bg-pink px-4 py-14 sm:px-8 sm:py-16 lg:px-12">
+      <div className="w-full rounded-[2.5rem] bg-ink px-6 py-14 sm:rounded-[3.5rem] sm:px-10 sm:py-16 lg:px-14">
         <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <span className="text-2xl font-extrabold uppercase leading-tight tracking-tight sm:text-3xl">
+            <span
+              className="block text-2xl font-black uppercase leading-none tracking-tighter text-white sm:text-3xl"
+              style={{ fontFamily: '"Arial Black", Impact, system-ui, sans-serif' }}
+            >
               {brand.name}
             </span>
-            <p className="mt-3 max-w-xs text-sm text-ink/65">{brand.tagline}</p>
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
+              {brand.tagline}
+            </p>
             <a
               href={brand.telegram}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-block text-xl font-bold hover:underline"
+              className="mt-6 inline-block text-xl font-extrabold text-lime transition hover:underline"
             >
               {brand.telegramHandle}
             </a>
-            <a href={`mailto:${brand.email}`} className="mt-1 block text-sm text-ink/70 hover:underline">
+            <a
+              href={`mailto:${brand.email}`}
+              className="mt-1.5 block text-sm text-white/70 transition hover:text-white hover:underline"
+            >
               {brand.email}
             </a>
           </div>
 
           <nav aria-label="Розділи сайту">
-            <h2 className="text-[11px] font-bold uppercase tracking-widest text-ink/45">Навігація</h2>
+            <h2 className={heading}>Навігація</h2>
             <ul className="mt-4 space-y-2">
               {nav.map((n) => (
                 <li key={n.href}>
-                  <a
-                    href={n.href}
-                    className="inline-block rounded-full border border-ink/20 px-4 py-1.5 text-sm transition hover:bg-ink hover:text-white"
-                  >
+                  <a href={n.href} className={pill}>
                     {n.label}
                   </a>
                 </li>
               ))}
               {/* Вхід для тих, хто вже купив курс. */}
               <li>
-                <a
-                  href="/cabinet"
-                  className="inline-block rounded-full border border-ink/20 px-4 py-1.5 text-sm transition hover:bg-ink hover:text-white"
-                >
+                <a href="/cabinet" className={pill}>
                   Кабінет
                 </a>
               </li>
@@ -54,7 +71,7 @@ export default function Footer() {
           </nav>
 
           <div>
-            <h2 className="text-[11px] font-bold uppercase tracking-widest text-ink/45">Соцмережі</h2>
+            <h2 className={heading}>Соцмережі</h2>
             <ul className="mt-4 space-y-2">
               {SOCIALS.map((s) => (
                 <li key={s.label}>
@@ -62,7 +79,7 @@ export default function Footer() {
                     href={s.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-block rounded-full border border-ink/20 px-4 py-1.5 text-sm transition hover:bg-ink hover:text-white"
+                    className={pill}
                   >
                     {s.label}
                   </a>
@@ -70,11 +87,14 @@ export default function Footer() {
               ))}
             </ul>
 
-            <h2 className="mt-8 text-[11px] font-bold uppercase tracking-widest text-ink/45">Документи</h2>
+            <h2 className={`mt-8 ${heading}`}>Документи</h2>
             <ul className="mt-4 space-y-2">
               {footer.legal.map((l) => (
                 <li key={l.label}>
-                  <a href={l.href} className="text-sm text-ink/70 underline-offset-4 hover:underline">
+                  <a
+                    href={l.href}
+                    className="text-sm text-white/70 underline-offset-4 transition hover:text-white hover:underline"
+                  >
                     {l.label}
                   </a>
                 </li>
@@ -83,9 +103,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-ink/15 pt-6">
-          <p className="text-xs text-ink/55">{footer.disclaimer}</p>
-          <p className="mt-3 text-xs text-ink/45">{footer.note}</p>
+        <div className="mt-12 border-t border-white/15 pt-6">
+          <p className="text-xs leading-relaxed text-white/60">
+            {footer.disclaimer}
+          </p>
+          <p className="mt-3 text-xs text-white/45">{footer.note}</p>
         </div>
       </div>
     </footer>
