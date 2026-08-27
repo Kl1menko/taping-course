@@ -132,9 +132,13 @@ const ExpertCard = ({
 
 export default function Hero() {
   return (
+    // overflow-x-clip замість hidden: картки-накладки навмисно
+    // звисають за праву й ліву межі секції, і hidden обрізав би їх.
+    // Горизонтальний скрол сторінки при цьому не з'являється —
+    // його тримає html, body { overflow-x: clip } у globals.css.
     <section
       id="top"
-      className="relative w-full overflow-hidden pt-24 sm:pt-28"
+      className="relative w-full overflow-x-clip pt-24 sm:pt-28"
       style={{ backgroundColor: BLUE }}
     >
       {/* Сітка на фоні — прийом із референсу. */}
@@ -165,10 +169,21 @@ export default function Hero() {
           >
             <span className="relative flex w-full justify-start pl-[3%] md:pl-[4%]">
               <span
-                className="block whitespace-nowrap text-[clamp(2.2rem,9.4vw,104px)] font-black leading-[0.85] tracking-tighter"
+                className="relative block whitespace-nowrap text-[clamp(2.2rem,9.4vw,104px)] font-black leading-[0.85] tracking-tighter"
                 style={{ color: ACID, textShadow: "var(--depth-ink)" }}
               >
                 Тейпування
+                {/* Стрілка прив'язана до самого слова, а не до
+                    контейнера на всю ширину: текст тут whitespace-nowrap
+                    і його ширина залежить від шрифту, тому відсоток від
+                    контейнера на різних телефонах відводив стрілку
+                    в порожнечу праворуч від тексту. */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -right-10 -top-2 h-12 w-12 sm:-right-16 sm:h-20 sm:w-20 md:-right-24 md:h-28 md:w-28"
+                >
+                  <ArrowScribbleRight />
+                </span>
               </span>
             </span>
 
@@ -183,23 +198,20 @@ export default function Hero() {
 
             <span className="relative flex w-full justify-start pl-[18%] md:pl-[30%]">
               <span
-                className="block whitespace-nowrap text-[clamp(2.7rem,11.5vw,138px)] font-black leading-[0.85] tracking-tighter text-white"
+                className="relative block whitespace-nowrap text-[clamp(2.7rem,11.5vw,138px)] font-black leading-[0.85] tracking-tighter text-white"
                 style={{ textShadow: "var(--depth)" }}
               >
+                {/* Так само прив'язана до слова — зліва від нього. */}
+                <span
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-11 -bottom-3 h-12 w-12 sm:-left-[4.5rem] sm:h-20 sm:w-20 md:-left-28 md:h-28 md:w-28"
+                >
+                  <ArrowScribbleLeft />
+                </span>
                 а система
               </span>
             </span>
           </h1>
-
-          {/* ── стрілки: видимі на всіх екранах, зокрема мобільних ── */}
-          <div className="pointer-events-none absolute inset-0 h-full w-full">
-            <div className="absolute -bottom-[8%] left-[20%] z-40 h-14 w-14 sm:-bottom-[10%] sm:left-[24%] sm:h-20 sm:w-20 md:h-28 md:w-28">
-              <ArrowScribbleLeft />
-            </div>
-            <div className="absolute -top-[8%] right-[16%] z-40 h-14 w-14 sm:-top-[10%] sm:right-[26%] sm:h-20 sm:w-20 md:h-28 md:w-28">
-              <ArrowScribbleRight />
-            </div>
-          </div>
 
           {/* ── картка й бейдж: на мобільному вони в стрічці нижче ── */}
           <div className="pointer-events-none absolute inset-0 hidden h-full w-full sm:block">
@@ -228,7 +240,7 @@ export default function Hero() {
                 y: { duration: 6.5, repeat: Infinity, ease: "easeInOut" },
                 rotate: { duration: 0 },
               }}
-              className="pointer-events-auto absolute -top-[6%] right-[2%] z-30 lg:-right-[12%]"
+              className="pointer-events-auto absolute -top-[20%] -right-[8%] z-30 lg:-top-[26%] lg:-right-[26%]"
             >
               <ExpertCard network="tiktok" />
             </motion.div>
@@ -237,13 +249,17 @@ export default function Hero() {
 
         {/* ── на мобільному накладки сховані: картка під заголовком.
             Бейджа ціни тут немає — вона й так стоїть у кнопці нижче. ── */}
-        <div className="mt-10 flex items-start justify-between gap-3 px-2 sm:hidden">
+        {/* max-w-sm обмежує пару: на flex-1 картки тягнуться на всю
+            ширину екрана, і на телефоні 430px кожна виходила ~200px —
+            вони з'їдали пів першого екрана й відсували CTA за згин.
+            У DevTools на 375px це було непомітно. */}
+        <div className="mx-auto mt-8 flex max-w-sm items-start justify-between gap-2.5 px-2 sm:hidden">
           {/* Нахил у різні боки — картки читаються як приклеєні
               поляроїди, а не як дві колонки сітки. */}
           <div className="min-w-0 flex-1 -rotate-[10deg]">
             <ExpertCard />
           </div>
-          <div className="min-w-0 flex-1 -translate-y-6 rotate-[10deg]">
+          <div className="min-w-0 flex-1 -translate-y-5 rotate-[10deg]">
             <ExpertCard network="tiktok" />
           </div>
         </div>
