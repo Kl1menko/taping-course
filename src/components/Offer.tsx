@@ -53,12 +53,12 @@ export default function Offer() {
   const hasPrice = offer.price !== null;
 
   return (
-    // Круглі кути згори: далі йде FinalCta, теж синій із такою самою
-    // сіткою. Без цієї межі два блоки зливаються в одну довгу синю
-    // смугу з випадковим швом посередині.
+    // Круглі кути з обох боків: секція лежить між двома світлими
+    // (Faq і Contacts) і читається як окрема синя плита, а не як
+    // обрив фону.
     <section
       id="offer"
-      className="relative w-full overflow-hidden rounded-t-[2.5rem] py-20 sm:rounded-t-[3.5rem] sm:py-28"
+      className="relative mx-[10px] overflow-hidden rounded-[2.5rem] py-20 sm:rounded-[3.5rem] sm:py-28"
       style={{ backgroundColor: BLUE }}
     >
       {/* Сітка на фоні — прийом хіро. */}

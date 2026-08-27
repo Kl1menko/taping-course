@@ -36,13 +36,15 @@ export default function Home() {
         {/* 06 */} <Mechanism />
         {/* 07 */} <Program />
         {/* 08 */} <Included />
+        {/* CTA одразу після переліку того, що входить у курс: людина
+            щойно побачила повний склад — це найкоротший шлях до дії. */}
+        <FinalCta />
         {/* 09 */} <Proof />
         {/* 10 */} <Expert />
         {/* 11 */} <Evidence />
         {/* 12 */} <Objections />
         {/* 13 */} <Faq />
         {/* 14 */} <Offer />
-        {/* 15 */} <FinalCta />
         <Contacts />
       </main>
       <Footer />

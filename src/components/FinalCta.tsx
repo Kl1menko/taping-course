@@ -7,7 +7,10 @@ export default function FinalCta() {
     // Синя секція з сіткою — та сама стилістика, що й хіро.
     // Фінальний CTA має бути найгучнішим місцем сторінки, і синій
     // замикає композицію: сторінка починається й закінчується ним.
-    <section id="apply" className="relative overflow-hidden bg-blue py-16 sm:py-24">
+    // Круглі кути згори: тепер секція йде одразу за Included, який
+    // темний (bg-ink). Без межі синій і майже чорний зливаються
+    // в одну суцільну темну смугу.
+    <section id="apply" className="relative overflow-hidden rounded-t-[2.5rem] bg-blue py-16 sm:rounded-t-[3.5rem] sm:py-24">
       <div
         className="pointer-events-none absolute inset-0 bg-[size:4rem_4rem] bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)]"
         aria-hidden="true"
