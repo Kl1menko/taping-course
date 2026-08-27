@@ -3,16 +3,9 @@ import { Reveal } from "./ui";
 import { MedicalIcon, type MedicalIconName } from "./icons";
 import { BentoCard, BentoGlyph, BentoText, BentoTitle } from "./BentoCard";
 
-// Бенто на 6 колонок під 6 карток: 3+3, далі 2+2+2.
-const SPAN = [
-  "lg:col-span-3",
-  "lg:col-span-3",
-  "lg:col-span-2",
-  "lg:col-span-2",
-  "lg:col-span-2",
-  "lg:col-span-2",
-];
-
+// Рівна сітка 3×2: шість однакових карток у два рядки.
+// Раніше спани 3+3 / 2+2+2 давали 14 колонок на шести, через що
+// остання картка зривалась у третій рядок сама.
 export default function Included() {
   return (
     <section id="included" className="px-[10px] py-16 sm:py-24">
@@ -25,13 +18,11 @@ export default function Included() {
           </div>
         </Reveal>
 
-        <div className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-6">
+        <div className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {included.items.map((item, i) => {
-            const span = SPAN[i] ?? "lg:col-span-2";
-            const wide = span !== "lg:col-span-2";
             const isLime = i % 3 === 1;
             return (
-              <Reveal key={item.name} delay={i * 70} className={`h-full ${span}`}>
+              <Reveal key={item.name} delay={i * 70} className="h-full">
                 <BentoCard tone="dark" className="items-center text-center">
                   <BentoGlyph accent={isLime ? "lime" : "blue"} size="lg">
                     <MedicalIcon
@@ -39,7 +30,7 @@ export default function Included() {
                       className="h-8 w-8 sm:h-9 sm:w-9"
                     />
                   </BentoGlyph>
-                  <BentoTitle className={`mt-5 text-white ${wide ? "sm:text-2xl" : ""}`}>
+                  <BentoTitle className="mt-5 text-white">
                     {item.name}
                   </BentoTitle>
                   <BentoText tone="dark" className="mt-2.5">
