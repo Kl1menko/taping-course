@@ -52,9 +52,13 @@ export default function Contacts() {
   return (
     // Круглі кути й бічні поля: секція лежить на кремовому фоні
     // сторінки й читається як окрема синя плита, так само як Offer.
+    //
+    // mt-* обов'язковий: одразу над контактами лежить Offer — теж
+    // синя плита такого самого кольору. Без просвіту кремового фону
+    // між ними дві секції зливаються в один довгий синій блок.
     <section
       id="contacts"
-      className="relative mx-[10px] overflow-hidden rounded-[2.5rem] py-16 sm:rounded-[3.5rem] sm:py-24"
+      className="relative mx-[10px] mt-3 overflow-hidden rounded-[2.5rem] py-16 sm:mt-4 sm:rounded-[3.5rem] sm:py-24"
       style={{ backgroundColor: BLUE }}
     >
       <div
