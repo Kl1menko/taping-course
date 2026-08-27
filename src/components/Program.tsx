@@ -71,9 +71,14 @@ export default function Program() {
                           </span>
                         </span>
 
+                        {/* Плюс/хрестик розкриття — фірмовим синім.
+                            Закритий стан теж синій, лише блідий: так
+                            видно, що це та сама кнопка в двох станах. */}
                         <span
                           className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all duration-300 ${
-                            isOpen ? "rotate-45 bg-lime" : "bg-ink/5"
+                            isOpen
+                              ? "rotate-45 bg-blue text-white"
+                              : "bg-blue/10 text-blue"
                           }`}
                           aria-hidden="true"
                         >

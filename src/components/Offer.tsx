@@ -33,13 +33,13 @@ const DEPTH = depth(BLUE_DEEP, 8);
 const DEPTH_SM = depth(BLUE_DEEP, 8, 0.5);
 
 /** Лаймова стрілка-карлючка — та сама деталь, що в хіро. */
-const ArrowScribble = () => (
+const ArrowScribble = ({ strokeWidth = 6 }: { strokeWidth?: number }) => (
   <svg
     viewBox="0 0 100 100"
     className="h-full w-full overflow-visible stroke-current"
     style={{ color: ACID }}
     fill="none"
-    strokeWidth="6"
+    strokeWidth={strokeWidth}
     strokeLinecap="round"
     strokeLinejoin="round"
     aria-hidden="true"
@@ -98,21 +98,17 @@ export default function Offer() {
         {/* ── Скляна картка оплати ── */}
         <Reveal delay={120}>
           <div className="relative mx-auto mt-14 max-w-2xl">
-            {/* Стрілка лежить ЗА межами скляної картки, а не всередині:
-                backdrop-blur створює containing block і обрізає все,
-                що виходить за краї, тому попередній варіант усередині
-                картки просто не було видно. Прив'язана до обгортки,
-                тому позиція по вертикалі задана у відсотках висоти —
-                блок ціни лежить приблизно на 2/3 картки.
-                Схована на вузьких екранах: полів для неї там немає. */}
+            {/* Скло винесено в окремий шар під вмістом. backdrop-blur
+                створює containing block і обрізає все, що виходить за
+                краї елемента, — саме тому стрілка всередині картки була
+                невидима. Тепер блюр живе тут, а вміст лежить поверх
+                нього звичайним потоком і нічого не обрізає. */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute -left-24 top-[68%] z-10 hidden h-20 w-20 -translate-y-1/2 lg:block"
-            >
-              <ArrowScribble />
-            </div>
+              className="absolute inset-0 rounded-[1.75rem] border border-white/40 bg-white/15 shadow-2xl backdrop-blur-md sm:rounded-[2.25rem]"
+            />
 
-            <div className="rounded-[1.75rem] border border-white/40 bg-white/15 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.25rem] sm:p-10">
+            <div className="relative p-6 sm:p-10">
               {/* value stack */}
               <ul className="grid gap-2.5 sm:grid-cols-2">
                 {offer.includes.map((item) => (
@@ -136,7 +132,21 @@ export default function Offer() {
               </ul>
 
               {/* ── ціна ── */}
-              <div className="mt-9 border-t border-white/25 pt-8 text-center">
+              <div className="relative mt-9 border-t border-white/25 pt-8 text-center">
+                {/* Стрілка всередині блоку ціни, тому тримається
+                    навпроти числа за будь-якої довжини списку вище.
+                    Вістря шляху — правий низ (95,70), тож дзеркалити
+                    її не можна: інакше дивиться від картки.
+                    На моб дрібніша й ближче — полів там менше. */}
+                <div
+                  aria-hidden="true"
+                  className="pointer-events-none absolute -left-4 top-[62%] h-14 w-14 -translate-y-1/2 sm:left-2 sm:h-20 sm:w-20 lg:left-6 lg:h-24 lg:w-24"
+                >
+                  {/* Товща лінія (9 замість 6): на цьому розмірі
+                      дефолтна виглядала тонкою рискою, а не карлючкою. */}
+                  <ArrowScribble strokeWidth={9} />
+                </div>
+
 
                 {hasPrice ? (
                   <>
