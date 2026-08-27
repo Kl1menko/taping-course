@@ -7,6 +7,7 @@ import Outcome from "@/components/Outcome";
 import Mechanism from "@/components/Mechanism";
 import Program from "@/components/Program";
 import Included from "@/components/Included";
+import Cabinet from "@/components/Cabinet";
 import Proof from "@/components/Proof";
 import Expert from "@/components/Expert";
 import Evidence from "@/components/Evidence";
@@ -36,6 +37,9 @@ export default function Home() {
         {/* 06 */} <Mechanism />
         {/* 07 */} <Program />
         {/* 08 */} <Included />
+        {/* Як цим користуватись: щойно показали склад курсу —
+            тепер показуємо, де він живе. */}
+        <Cabinet />
         {/* CTA одразу після переліку того, що входить у курс: людина
             щойно побачила повний склад — це найкоротший шлях до дії. */}
         <FinalCta />
