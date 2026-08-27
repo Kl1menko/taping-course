@@ -10,8 +10,12 @@ export default function OutcomeCard({
   verb,
   text,
   icon,
-  /** Не остання картка в рядку — між нею й наступною йде стрілка. */
+  /** Не остання картка в рядку на lg — праворуч від неї йде стрілка. */
   withArrow = false,
+  /** Не остання картка взагалі — під нею є куди вести стрілку вниз. */
+  withArrowDown = false,
+  /** Не остання картка в рядку на sm (двоколонковій сітці). */
+  withArrowRightSm = false,
   /** Широка плитка бенто. */
   wide = false,
 }: {
@@ -20,6 +24,8 @@ export default function OutcomeCard({
   text: string;
   icon: string;
   withArrow?: boolean;
+  withArrowDown?: boolean;
+  withArrowRightSm?: boolean;
   wide?: boolean;
 }) {
   // Кожна третя картка — лаймова, решта сині. Так сітка не читається
@@ -45,6 +51,24 @@ export default function OutcomeCard({
           </span>
         </BentoPill>
       </div>
+
+      {/* Три розкладки — три різні напрямки стрілки, і в кожен момент
+          видима лише одна:
+            <sm  одна колонка   → вниз, у проміжок під карткою;
+            sm   дві колонки    → праворуч, до сусідки в парі;
+            lg   бенто на 6     → праворуч, як було.
+          Стрілка живе в проміжку сітки (gap-4 = 16px), тому винесена
+          за межі картки від'ємним відступом і не займає місця в потоці. */}
+      {/* Розмір і зсув підібрані під gap-4 (16px): стрілка h-7 (28px),
+          зсунута на 22px, виступає в проміжок і майже не заходить на
+          сусідню картку — інакше вона лягала б поверх її кута. */}
+      {withArrowDown && (
+        <ScribbleArrow className="absolute -bottom-[22px] left-1/2 z-10 h-7 w-7 -translate-x-1/2 rotate-90 sm:hidden" />
+      )}
+
+      {withArrowRightSm && (
+        <ScribbleArrow className="absolute -right-[22px] top-1/2 z-10 hidden h-7 w-7 -translate-y-1/2 sm:block lg:hidden" />
+      )}
 
       {withArrow && (
         <ScribbleArrow className="absolute -right-9 bottom-10 z-10 hidden h-12 w-12 lg:block" />

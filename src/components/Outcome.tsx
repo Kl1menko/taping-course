@@ -27,9 +27,12 @@ export default function Outcome() {
           </div>
         </Reveal>
 
+        {/* overflow-visible не потрібен: стрілки лягають у проміжки
+            сітки, а не за її межі. */}
         <div className="mx-auto mt-14 grid max-w-6xl gap-4 sm:grid-cols-2 lg:grid-cols-6">
           {outcome.items.map((item, i) => {
             const span = SPAN[i] ?? "lg:col-span-2";
+            const last = i === outcome.items.length - 1;
             return (
               <Reveal key={item.verb} delay={i * 70} className={`h-full ${span}`}>
                 <OutcomeCard
@@ -38,11 +41,14 @@ export default function Outcome() {
                   verb={item.verb}
                   text={item.text}
                   wide={span !== "lg:col-span-2"}
-                  // Стрілка тягнеться до сусідньої картки праворуч —
-                  // тільки там, де сусід справді є в тому ж рядку.
-                  // Рядки сітки: [0,1,2] | [3,4] | [5], тож стрілку
-                  // отримують 0, 1 і 3 — останні в рядку лишаються без неї.
+                  // lg: рядки бенто [0,1,2] | [3,4] | [5] — стрілку
+                  // отримують 0, 1 і 3; останні в рядку лишаються без неї.
                   withArrow={i < 2 || i === 3}
+                  // sm: дві колонки, пари [0,1] | [2,3] | [4,5] —
+                  // стрілка в парі йде від лівої картки до правої.
+                  withArrowRightSm={i % 2 === 0 && !last}
+                  // Одна колонка: стрілка вниз під кожною, крім останньої.
+                  withArrowDown={!last}
                 />
               </Reveal>
             );
