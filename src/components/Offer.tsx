@@ -98,6 +98,20 @@ export default function Offer() {
         {/* ── Скляна картка оплати ── */}
         <Reveal delay={120}>
           <div className="relative mx-auto mt-14 max-w-2xl">
+            {/* Стрілка лежить ЗА межами скляної картки, а не всередині:
+                backdrop-blur створює containing block і обрізає все,
+                що виходить за краї, тому попередній варіант усередині
+                картки просто не було видно. Прив'язана до обгортки,
+                тому позиція по вертикалі задана у відсотках висоти —
+                блок ціни лежить приблизно на 2/3 картки.
+                Схована на вузьких екранах: полів для неї там немає. */}
+            <div
+              aria-hidden="true"
+              className="pointer-events-none absolute -left-24 top-[68%] z-10 hidden h-20 w-20 -translate-y-1/2 lg:block"
+            >
+              <ArrowScribble />
+            </div>
+
             <div className="rounded-[1.75rem] border border-white/40 bg-white/15 p-6 shadow-2xl backdrop-blur-md sm:rounded-[2.25rem] sm:p-10">
               {/* value stack */}
               <ul className="grid gap-2.5 sm:grid-cols-2">
@@ -122,26 +136,7 @@ export default function Offer() {
               </ul>
 
               {/* ── ціна ── */}
-              <div className="relative mt-9 border-t border-white/25 pt-8 text-center">
-                {/* Стрілка вказує саме на ціну — вона тут головна.
-                    Прив'язана до блоку ціни, а не до картки, тому
-                    лишається навпроти числа за будь-якої висоти
-                    списку вище. Схована на вузьких екранах: за межами
-                    картки там немає полів, куди її покласти.
-
-                    Геометрія: вістря шляху — точка (95,70) з viewBox
-                    100×100, тобто правий низ. Тому дзеркалити її не
-                    можна (інакше дивиться від картки), а -left-20
-                    підводить вістря рівно до краю блоку. top-[38%]
-                    замість half: вістря лежить нижче центру самої
-                    іконки, і на half воно з'їжджало б на підпис
-                    під ціною замість числа. */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -left-20 top-[38%] hidden h-20 w-20 -translate-y-1/2 lg:block"
-                >
-                  <ArrowScribble />
-                </div>
+              <div className="mt-9 border-t border-white/25 pt-8 text-center">
 
                 {hasPrice ? (
                   <>

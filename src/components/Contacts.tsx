@@ -89,7 +89,7 @@ export default function Contacts() {
           </div>
         </Reveal>
 
-        <div className="mx-auto mt-12 grid max-w-4xl gap-4 sm:mt-14 sm:grid-cols-3">
+        <div className="mx-auto mt-10 grid max-w-4xl gap-2.5 sm:mt-14 sm:grid-cols-3 sm:gap-4">
           {CHANNELS.map((c, i) => {
             const Icon = ICONS[c.icon as keyof typeof ICONS];
             return (
@@ -98,25 +98,32 @@ export default function Contacts() {
                   href={c.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex h-full flex-col items-center rounded-[1.75rem] border border-white/40 bg-white/15 p-7 text-center shadow-2xl backdrop-blur-md transition duration-300 hover:-translate-y-1.5 hover:bg-white/25 sm:rounded-[2.25rem] sm:p-8"
+                  className="group flex h-full flex-row items-center gap-4 rounded-2xl border border-white/40 bg-white/15 p-4 text-left shadow-2xl backdrop-blur-md transition duration-300 hover:bg-white/25 sm:flex-col sm:gap-0 sm:rounded-[2.25rem] sm:p-8 sm:text-center sm:hover:-translate-y-1.5"
                 >
                   <span
-                    className="flex h-16 w-16 items-center justify-center rounded-full text-ink transition-transform duration-500 group-hover:scale-110"
+                    className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink transition-transform duration-500 sm:h-16 sm:w-16 sm:group-hover:scale-110"
                     style={{ backgroundColor: ACID }}
                   >
-                    <Icon className="h-7 w-7" />
+                    <Icon className="h-5 w-5 sm:h-7 sm:w-7" />
                   </span>
 
-                  <span className="mt-6 text-[11px] font-black uppercase tracking-widest text-white/70">
-                    {c.label}
-                  </span>
+                  {/* На моб текст стоїть праворуч від іконки одним
+                      блоком; від sm — під нею, по центру. */}
+                  <span className="flex min-w-0 flex-1 flex-col sm:flex-none sm:items-center">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-white/70 sm:mt-6 sm:text-[11px]">
+                      {c.label}
+                    </span>
 
-                  <span className="mt-2 text-lg font-extrabold tracking-tight text-white">
-                    {c.value}
-                  </span>
+                    <span className="mt-0.5 truncate text-base font-extrabold tracking-tight text-white sm:mt-2 sm:text-lg">
+                      {c.value}
+                    </span>
 
-                  <span className="mt-3 text-sm leading-relaxed text-white/90">
-                    {c.note}
+                    {/* Підпис на моб прихований: у горизонтальній
+                        картці він перетворює рядок на три рядки
+                        дрібного тексту й з'їдає всю компактність. */}
+                    <span className="hidden text-sm leading-relaxed text-white/90 sm:mt-3 sm:block">
+                      {c.note}
+                    </span>
                   </span>
 
                   {/* Обгортка з mt-auto притискає стрілку до низу
@@ -125,13 +132,13 @@ export default function Contacts() {
                       неохайно. Відступ від тексту тримає pt-7 на
                       обгортці, а не трансформ на самій кнопці —
                       трансформ конфліктував би з rotate на ховері. */}
-                  <span className="mt-auto pt-7">
+                  <span className="sm:mt-auto sm:pt-7">
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full text-ink transition-transform duration-300 group-hover:rotate-45"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-ink transition-transform duration-300 group-hover:rotate-45 sm:h-11 sm:w-11"
                       style={{ backgroundColor: ACID }}
                       aria-hidden="true"
                     >
-                      <Arrow className="h-4 w-4" />
+                      <Arrow className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
                     </span>
                   </span>
                 </a>

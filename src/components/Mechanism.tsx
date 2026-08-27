@@ -52,8 +52,27 @@ export default function Mechanism() {
                     </BentoPill>
                   </div>
 
-                  {/* Стрілка лише всередині рядка, не в його кінці:
-                      кроки 0→1 і 2→3 стоять поруч, 1→2 переносяться. */}
+                  {/* Три розкладки — три напрямки стрілки, видима
+                      завжди рівно одна:
+                        <sm  одна колонка → вниз, у проміжок;
+                        sm   дві колонки  → праворуч у парі [0,1] [2,3];
+                        lg   бенто на 6   → праворуч, як було.
+                      Останній крок (4) стрілки не отримує в жодній
+                      розкладці — вести її нема куди. */}
+                  {i < mechanism.steps.length - 1 && (
+                    <ScribbleArrow
+                      tone="lime"
+                      className="absolute -bottom-[22px] left-1/2 z-10 h-7 w-7 -translate-x-1/2 rotate-90 sm:hidden"
+                    />
+                  )}
+
+                  {i % 2 === 0 && (
+                    <ScribbleArrow
+                      tone="lime"
+                      className="absolute -right-[22px] top-1/2 z-10 hidden h-7 w-7 -translate-y-1/2 sm:block lg:hidden"
+                    />
+                  )}
+
                   {i % 2 === 0 && (
                     <ScribbleArrow
                       tone="lime"
