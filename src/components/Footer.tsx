@@ -15,7 +15,7 @@ const SOCIALS = [
 
 // Спільний вигляд для посилань-пігулок у навігації та соцмережах.
 const pill =
-  "inline-block rounded-full border border-white/20 px-4 py-1.5 text-sm text-white/80 transition hover:border-lime hover:bg-lime hover:text-ink";
+  "inline-block rounded-full border border-white/20 px-3 py-1 text-[13px] text-white/80 transition hover:border-lime hover:bg-lime hover:text-ink";
 
 const heading =
   "text-[11px] font-black uppercase tracking-widest text-white/45";
@@ -23,8 +23,8 @@ const heading =
 export default function Footer() {
   return (
     <footer className="px-[10px] pb-[10px]">
-      <div className="w-full rounded-[2.5rem] bg-ink px-6 py-14 sm:rounded-[3.5rem] sm:px-10 sm:py-16 lg:px-14">
-        <div className="grid gap-10 lg:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="w-full rounded-[2.5rem] bg-ink px-6 py-10 sm:rounded-[3.5rem] sm:px-10 sm:py-12 lg:px-14">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
             <span
               className="block text-2xl font-black uppercase leading-none tracking-tighter text-white sm:text-3xl"
@@ -32,20 +32,20 @@ export default function Footer() {
             >
               {brand.name}
             </span>
-            <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/60">
+            <p className="mt-2.5 max-w-xs text-sm leading-relaxed text-white/60">
               {brand.tagline}
             </p>
             <a
               href={brand.telegram}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-6 inline-block text-xl font-extrabold text-lime transition hover:underline"
+              className="mt-4 inline-block text-lg font-extrabold text-lime transition hover:underline"
             >
               {brand.telegramHandle}
             </a>
             <a
               href={`mailto:${brand.email}`}
-              className="mt-1.5 block text-sm text-white/70 transition hover:text-white hover:underline"
+              className="mt-1 block text-sm text-white/70 transition hover:text-white hover:underline"
             >
               {brand.email}
             </a>
@@ -53,7 +53,7 @@ export default function Footer() {
 
           <nav aria-label="Розділи сайту">
             <h2 className={heading}>Навігація</h2>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-3 flex flex-wrap gap-1.5">
               {nav.map((n) => (
                 <li key={n.href}>
                   <a href={n.href} className={pill}>
@@ -72,7 +72,7 @@ export default function Footer() {
 
           <div>
             <h2 className={heading}>Соцмережі</h2>
-            <ul className="mt-4 space-y-2">
+            <ul className="mt-3 flex flex-wrap gap-1.5">
               {SOCIALS.map((s) => (
                 <li key={s.label}>
                   <a
@@ -87,8 +87,8 @@ export default function Footer() {
               ))}
             </ul>
 
-            <h2 className={`mt-8 ${heading}`}>Документи</h2>
-            <ul className="mt-4 space-y-2">
+            <h2 className={`mt-6 ${heading}`}>Документи</h2>
+            <ul className="mt-3 space-y-1.5">
               {footer.legal.map((l) => (
                 <li key={l.label}>
                   <a
@@ -103,11 +103,11 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-white/15 pt-6">
+        <div className="mt-8 border-t border-white/15 pt-5">
           <p className="text-xs leading-relaxed text-white/60">
             {footer.disclaimer}
           </p>
-          <p className="mt-3 text-xs text-white/45">{footer.note}</p>
+          <p className="mt-2 text-xs text-white/45">{footer.note}</p>
         </div>
       </div>
     </footer>
