@@ -2,18 +2,9 @@ import { trustBar } from "@/content";
 import { Reveal } from "./ui";
 import TrustCard from "./TrustCard";
 
-// Бенто на 6 колонок і 6 карток: перша й четверта широкі (3 колонки),
-// решта по 2. Рівні шість плиток 3×2 читались як таблиця — саме від
-// цього бенто й рятує.
-const SPAN = [
-  "lg:col-span-3",
-  "lg:col-span-3",
-  "lg:col-span-2",
-  "lg:col-span-2",
-  "lg:col-span-2",
-  "lg:col-span-2",
-];
-
+// Рівна сітка 3×2: шість однакових карток у два рядки.
+// Раніше тут було бенто зі спанами 3+3 / 2+2+2+2 — сума 14 на шести
+// колонках, тому шоста картка зривалась у третій рядок сама.
 export default function TrustBar() {
   return (
     // Біла плита з круглими кутами наїжджає на синій хіро — прийом зі
@@ -29,13 +20,9 @@ export default function TrustBar() {
           </p>
         </Reveal>
 
-        <div className="mx-auto mt-8 grid max-w-6xl gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-6">
+        <div className="mx-auto mt-8 grid max-w-6xl gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3">
           {trustBar.items.map((item, i) => (
-            <Reveal
-              key={item.label}
-              delay={i * 70}
-              className={`h-full ${SPAN[i] ?? "lg:col-span-2"}`}
-            >
+            <Reveal key={item.label} delay={i * 70} className="h-full">
               <TrustCard index={i} icon={item.icon} label={item.label} />
             </Reveal>
           ))}
