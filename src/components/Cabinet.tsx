@@ -1,23 +1,27 @@
 import Image from "next/image";
 import { cabinet } from "@/content";
 import { Reveal } from "./ui";
-import { MedicalIcon, type MedicalIconName } from "./icons";
 
 // ── Промо кабінету ──
 //
 // Праворуч — справжній скриншот кабінету в макеті телефона
-// (public/cabinet/phone.png, фон прозорий). Малювати інтерфейс
-// заново на CSS сенсу немає: тут видно те, що людина отримає
-// насправді, і оновлюється воно заміною одного файлу.
+// (public/cabinet/phone.png). Малювати інтерфейс заново на CSS
+// сенсу немає: тут видно те, що людина отримає насправді, і
+// оновлюється воно заміною одного файлу.
 //
-// Вихідник важить ~2 МБ, тому віддаємо його через next/image:
-// він сам віддасть webp потрібного розміру, а не оригінал.
+// Фон у файлі повністю прозорий і обрізаний по межах корпусу,
+// тому підкладки під ним не треба. Віддається через next/image:
+// 211 КБ PNG перетворюються на ~15 КБ webp потрібної ширини.
 
 export default function Cabinet() {
   return (
-    <section id="cabinet" className="overflow-hidden py-16 sm:py-24">
+    // Знизу відступу немає: на мобільному телефон притиснутий до
+    // краю секції — обрізаний корпус має впиратись у межу блоку,
+    // інакше зріз висить над порожньою смугою. На lg відступ
+    // повертаємо: там знімок стоїть колонкою поруч із текстом.
+    <section id="cabinet" className="overflow-hidden pt-16 sm:pt-24 lg:pb-24">
       <div className="wrap">
-        <div className="mx-auto grid max-w-6xl items-center gap-10 lg:grid-cols-[1fr_auto] lg:gap-16">
+        <div className="mx-auto grid max-w-6xl items-end gap-10 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-16">
           {/* ── текст і переваги ── */}
           <div>
             <Reveal>
@@ -36,14 +40,17 @@ export default function Cabinet() {
               {cabinet.features.map((f, i) => (
                 <Reveal key={f.title} delay={80 + i * 70} className="h-full">
                   <div className="flex h-full gap-3.5 rounded-[1.5rem] border border-ink/10 bg-white p-4 sm:p-5">
+                    {/* Галочки замість тематичних іконок: тут перелік
+                        того, що вже працює, а не чотири різні теми —
+                        однаковий знак читається як список переваг. */}
                     <span
                       aria-hidden="true"
-                      className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-blue text-white"
+                      className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-lime text-ink"
                     >
-                      <MedicalIcon
-                        name={f.icon as MedicalIconName}
-                        className="h-[18px] w-[18px]"
-                      />
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3.5"
+                           strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4">
+                        <path d="m5 13 4 4L19 7" />
+                      </svg>
                     </span>
                     <span className="min-w-0">
                       <span className="block text-sm font-black uppercase leading-tight tracking-tight">
@@ -61,27 +68,22 @@ export default function Cabinet() {
 
           {/* ── справжній кабінет у телефоні ── */}
           <Reveal delay={140}>
-            {/* Знімок — горизонтальний кроп 4:3, де телефон обрізаний
-                знизу й праворуч. Тому він не стоїть окремою карткою,
-                а «виїжджає» з правого краю: -mr-* виводить обрізаний
-                бік за межі колонки, і зріз читається як задум, а не
-                як недоріз. Секція має overflow-hidden. */}
-            <div className="relative -mr-4 mt-2 sm:-mr-8 lg:-mr-16 lg:mt-0">
-              {/* Лаймова пляма за телефоном: фон у знімка прозорий,
-                  тож на кремовому він інакше висить у порожнечі.
-                  Зсунута вправо-вниз, за корпусом, а не по центру
-                  файлу — телефон займає саме той кут. */}
-              <span
-                aria-hidden="true"
-                className="absolute bottom-0 left-[15%] right-0 top-[10%] -z-10 rounded-[3rem] bg-lime/30 blur-3xl"
-              />
+            {/* Знімок — горизонтальний кроп, де телефон обрізаний
+                знизу й праворуч, тож він не стоїть окремою карткою,
+                а «виїжджає» з краю: зріз читається як задум.
+                На мобільному розтягуємо на всю ширину екрана —
+                -mx-* гасить бічні поля .wrap, які інакше лишали б
+                телефон у вузькій колонці. Секція має overflow-hidden. */}
+            {/* -mb-* прибирає щілину під картинкою: inline-елемент
+                лишає під собою місце під нижні виносні літери. */}
+            <div className="relative -mx-[10px] -mb-2 flex lg:mx-0 lg:-mb-0 lg:-mr-16">
               <Image
                 src="/cabinet/phone.png"
                 alt="Кабінет курсу на телефоні: прогрес «1 з 24 уроків» і кнопка «продовжити» з наступним уроком"
                 width={1245}
                 height={845}
-                sizes="(min-width: 1024px) 560px, (min-width: 640px) 460px, 340px"
-                className="h-auto w-full max-w-[340px] sm:max-w-[460px] lg:max-w-[560px]"
+                sizes="(min-width: 1024px) 560px, 100vw"
+                className="h-auto w-full lg:max-w-[560px]"
               />
             </div>
           </Reveal>
