@@ -67,17 +67,19 @@ export default function Cabinet() {
                 бік за межі колонки, і зріз читається як задум, а не
                 як недоріз. Секція має overflow-hidden. */}
             <div className="relative -mr-4 mt-2 sm:-mr-8 lg:-mr-16 lg:mt-0">
-              {/* Лаймова пляма за телефоном: на кремовому фоні знімок
-                  із прозорим тлом інакше висить у порожнечі. */}
+              {/* Лаймова пляма за телефоном: фон у знімка прозорий,
+                  тож на кремовому він інакше висить у порожнечі.
+                  Зсунута вправо-вниз, за корпусом, а не по центру
+                  файлу — телефон займає саме той кут. */}
               <span
                 aria-hidden="true"
-                className="absolute inset-y-8 left-1/4 right-0 -z-10 rounded-[3rem] bg-lime/30 blur-3xl"
+                className="absolute bottom-0 left-[15%] right-0 top-[10%] -z-10 rounded-[3rem] bg-lime/30 blur-3xl"
               />
               <Image
                 src="/cabinet/phone.png"
                 alt="Кабінет курсу на телефоні: прогрес «1 з 24 уроків» і кнопка «продовжити» з наступним уроком"
-                width={1600}
-                height={1200}
+                width={1245}
+                height={845}
                 sizes="(min-width: 1024px) 560px, (min-width: 640px) 460px, 340px"
                 className="h-auto w-full max-w-[340px] sm:max-w-[460px] lg:max-w-[560px]"
               />
