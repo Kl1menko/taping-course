@@ -138,7 +138,7 @@ export default function Hero() {
     // його тримає html, body { overflow-x: clip } у globals.css.
     <section
       id="top"
-      className="relative w-full overflow-x-clip pt-24 sm:pt-28"
+      className="relative w-full overflow-x-clip pt-20 sm:pt-28"
       style={{ backgroundColor: BLUE }}
     >
       {/* Сітка на фоні — прийом із референсу. */}
@@ -147,7 +147,7 @@ export default function Hero() {
         aria-hidden="true"
       />
 
-      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 pb-28 pt-6 sm:pb-36 md:pt-10">
+      <div className="relative z-10 mx-auto w-full max-w-[1440px] px-4 pb-16 pt-4 sm:pb-36 sm:pt-6 md:pt-10">
         <p className="animate-rise text-center text-xs font-bold uppercase tracking-[0.3em] text-white/50 sm:text-sm">
           {hero.kicker}
         </p>
@@ -160,16 +160,16 @@ export default function Hero() {
           }
         `}</style>
 
-        <div className="hero-depth relative mx-auto mt-10 flex w-full max-w-4xl flex-col items-center px-0 sm:px-2 sm:mt-16 lg:max-w-5xl">
+        <div className="hero-depth relative mx-auto mt-7 flex w-full max-w-4xl flex-col items-center px-0 sm:px-2 sm:mt-16 lg:max-w-5xl">
           {/* Заголовок один — h1 із трьох рядків, а не три h1:
               для читача з екранрідером це одне речення. */}
           <h1
             className="relative isolate z-10 w-full space-y-1 uppercase md:space-y-3"
             style={{ fontFamily: '"Arial Black", Impact, system-ui, sans-serif' }}
           >
-            <span className="relative flex w-full justify-start pl-[3%] md:pl-[4%]">
+            <span className="relative flex w-full justify-center md:justify-start md:pl-[4%]">
               <span
-                className="relative block whitespace-nowrap text-[clamp(2.2rem,9.4vw,104px)] font-black leading-[0.85] tracking-tighter"
+                className="relative block whitespace-nowrap text-[clamp(2.6rem,11.2vw,104px)] font-black leading-[0.85] tracking-tighter"
                 style={{ color: ACID, textShadow: "var(--depth-ink)" }}
               >
                 Тейпування
@@ -180,31 +180,31 @@ export default function Hero() {
                     в порожнечу праворуч від тексту. */}
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -right-10 -top-2 h-12 w-12 sm:-right-16 sm:h-20 sm:w-20 md:-right-24 md:h-28 md:w-28"
+                  className="pointer-events-none absolute right-0 -top-4 z-20 h-9 w-9 sm:-right-16 sm:-top-2 sm:h-20 sm:w-20 md:-right-24 md:h-28 md:w-28"
                 >
                   <ArrowScribbleRight />
                 </span>
               </span>
             </span>
 
-            <span className="relative flex w-full justify-start pl-[10%] md:pl-[16%]">
+            <span className="relative flex w-full justify-center md:justify-start md:pl-[16%]">
               <span
-                className="block whitespace-nowrap text-[clamp(3.1rem,13.4vw,150px)] font-black leading-[0.85] tracking-tighter text-white"
+                className="block whitespace-nowrap text-[clamp(3.5rem,15.5vw,150px)] font-black leading-[0.85] tracking-tighter text-white"
                 style={{ textShadow: "var(--depth)" }}
               >
                 не схеми
               </span>
             </span>
 
-            <span className="relative flex w-full justify-start pl-[18%] md:pl-[30%]">
+            <span className="relative flex w-full justify-center md:justify-start md:pl-[30%]">
               <span
-                className="relative block whitespace-nowrap text-[clamp(2.7rem,11.5vw,138px)] font-black leading-[0.85] tracking-tighter text-white"
+                className="relative block whitespace-nowrap text-[clamp(3rem,13.2vw,138px)] font-black leading-[0.85] tracking-tighter text-white"
                 style={{ textShadow: "var(--depth)" }}
               >
                 {/* Так само прив'язана до слова — зліва від нього. */}
                 <span
                   aria-hidden="true"
-                  className="pointer-events-none absolute -left-11 -bottom-3 h-12 w-12 sm:-left-[4.5rem] sm:h-20 sm:w-20 md:-left-28 md:h-28 md:w-28"
+                  className="pointer-events-none absolute left-0 -bottom-4 z-20 h-9 w-9 sm:-left-[4.5rem] sm:-bottom-3 sm:h-20 sm:w-20 md:-left-28 md:h-28 md:w-28"
                 >
                   <ArrowScribbleLeft />
                 </span>
@@ -253,7 +253,7 @@ export default function Hero() {
             ширину екрана, і на телефоні 430px кожна виходила ~200px —
             вони з'їдали пів першого екрана й відсували CTA за згин.
             У DevTools на 375px це було непомітно. */}
-        <div className="mx-auto mt-8 flex max-w-sm items-start justify-between gap-2.5 px-2 sm:hidden">
+        <div className="mx-auto mt-7 flex max-w-sm items-start justify-between gap-2.5 px-2 sm:hidden">
           {/* Нахил у різні боки — картки читаються як приклеєні
               поляроїди, а не як дві колонки сітки. */}
           <div className="min-w-0 flex-1 -rotate-[10deg]">
@@ -265,12 +265,12 @@ export default function Hero() {
         </div>
 
         {/* ── підзаголовок і CTA ── */}
-        <div className="relative z-10 mx-auto mt-4 max-w-3xl text-center sm:mt-32">
+        <div className="relative z-10 mx-auto mt-9 max-w-3xl text-center sm:mt-32">
           <p className="mx-auto max-w-2xl animate-rise text-base leading-relaxed text-white/75 sm:text-lg">
             {hero.subtitle}
           </p>
 
-          <div className="mx-auto mt-10 flex w-full max-w-xl animate-rise flex-col items-stretch gap-3">
+          <div className="mx-auto mt-8 flex w-full max-w-xl sm:mt-10 animate-rise flex-col items-stretch gap-3">
             <BuyButton
               source="hero"
               glass="iosLime"

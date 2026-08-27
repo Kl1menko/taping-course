@@ -15,11 +15,10 @@ import { Reveal } from "./ui";
 
 export default function Cabinet() {
   return (
-    // Знизу відступу немає: на мобільному телефон притиснутий до
-    // краю секції — обрізаний корпус має впиратись у межу блоку,
-    // інакше зріз висить над порожньою смугою. На lg відступ
-    // повертаємо: там знімок стоїть колонкою поруч із текстом.
-    <section id="cabinet" className="overflow-hidden pt-16 sm:pt-24 lg:pb-24">
+    // Відступ знизу є на всіх ширинах: далі йде яскраво-синій
+    // FinalCta, і без повітря світлий мокап телефону врізався
+    // в нього різкою межею.
+    <section id="cabinet" className="bg-white overflow-hidden pt-16 pb-10 sm:pt-24 sm:pb-14 lg:pb-24">
       <div className="wrap">
         <div className="mx-auto grid max-w-6xl items-end gap-10 lg:grid-cols-[1fr_auto] lg:items-center lg:gap-16">
           {/* ── текст і переваги ── */}
@@ -74,9 +73,15 @@ export default function Cabinet() {
                 На мобільному розтягуємо на всю ширину екрана —
                 -mx-* гасить бічні поля .wrap, які інакше лишали б
                 телефон у вузькій колонці. Секція має overflow-hidden. */}
-            {/* -mb-* прибирає щілину під картинкою: inline-елемент
-                лишає під собою місце під нижні виносні літери. */}
-            <div className="relative -mx-[10px] -mb-2 flex lg:mx-0 lg:-mb-0 lg:-mr-16">
+            <div
+              className="relative -mx-[10px] flex lg:mx-0 lg:-mr-16"
+              style={{
+                maskImage:
+                  "linear-gradient(to bottom, #000 82%, transparent 100%)",
+                WebkitMaskImage:
+                  "linear-gradient(to bottom, #000 82%, transparent 100%)",
+              }}
+            >
               <Image
                 src="/cabinet/phone.png"
                 alt="Кабінет курсу на телефоні: прогрес «1 з 24 уроків» і кнопка «продовжити» з наступним уроком"

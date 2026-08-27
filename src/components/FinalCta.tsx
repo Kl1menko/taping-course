@@ -7,11 +7,11 @@ export default function FinalCta() {
     // Синя секція з сіткою — та сама стилістика, що й хіро.
     // Фінальний CTA має бути найгучнішим місцем сторінки.
     //
-    // Зовнішній bg-ink потрібен через круглі кути: секція йде одразу
-    // за Included, який темний і притулений впритул. Без підкладки
-    // кольору сусіда крізь кути світив би кремовий фон сторінки,
-    // і межа читалась би як дві випадкові виїмки.
-    <section id="apply" className="relative bg-ink">
+    // Підкладка біла, бо секція йде одразу за світлим блоком
+    // кабінету: крізь круглі кути має світити той самий білий,
+    // що й під мокапом телефона, інакше на згині лишалися б
+    // дві темні виїмки.
+    <section id="apply" className="relative bg-white">
       <div className="relative overflow-hidden rounded-t-[2.5rem] bg-blue py-16 sm:rounded-t-[3.5rem] sm:py-24">
         <div
           className="pointer-events-none absolute inset-0 bg-[size:4rem_4rem] bg-[linear-gradient(to_right,#ffffff15_1px,transparent_1px),linear-gradient(to_bottom,#ffffff15_1px,transparent_1px)]"
